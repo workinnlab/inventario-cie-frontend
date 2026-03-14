@@ -42,6 +42,7 @@ Sistema de gestión de inventario para el **Centro de Innovación Educativa (CIE
 - **Sistema de Préstamos**: Gestión completa de préstamos con fechas límite y observaciones
 - **Prestatarios**: Registro de usuarios que pueden solicitar préstamos
 - **Historial de Movimientos**: Auditoría completa de entradas, salidas y ajustes
+- **Configuración de Alertas**: Panel de administración para configurar umbrales globales (stock mínimo, días para vencimiento, etc.)
 
 ### 🔐 Sistema de Roles
 
@@ -227,7 +228,8 @@ Front_inventario_CIE/
 │   │   ├── materiales.tsx
 │   │   ├── prestatarios.tsx
 │   │   ├── prestamos.tsx
-│   │   └── movimientos.tsx
+│   │   ├── movimientos.tsx
+│   │   └── configuracion.tsx
 │   │
 │   ├── 📂 services/          # Servicios API
 │   │   ├── auth.ts
@@ -237,7 +239,8 @@ Front_inventario_CIE/
 │   │   ├── materiales.ts
 │   │   ├── prestatarios.ts
 │   │   ├── prestamos.ts
-│   │   └── movimientos.ts
+│   │   ├── movimientos.ts
+│   │   └── configuracion.ts
 │   │
 │   ├── 📂 types/             # Tipos TypeScript
 │   │   └── index.ts
@@ -407,6 +410,19 @@ Front_inventario_CIE/
 
 ---
 
+### 9. Configuración
+
+**Propósito**: Administrar parámetros globales y umbrales de alerta del sistema (solo `admin`).
+
+**Características**:
+- Tarjetas de configuración con edición en línea
+- Actualización automática de alertas del Dashboard
+- Soporte para umbrales de stock mínimo, días de préstamos por vencer y alertas de equipos dañados.
+
+**Ruta**: `/configuracion`
+
+---
+
 ## 🔐 Autenticación y Roles
 
 ### Flujo de Autenticación
@@ -457,6 +473,8 @@ Front_inventario_CIE/
 | POST | `/prestamos` | Crear préstamo |
 | PUT | `/prestamos/:id/devolver` | Devolver préstamo |
 | GET | `/movimientos` | Listar movimientos |
+| GET | `/configuracion/alertas` | Listar configuraciones globales |
+| PUT | `/configuracion/alertas/:clave` | Actualizar configuración específica |
 
 ### Formato de Fechas
 
