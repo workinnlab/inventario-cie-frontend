@@ -1,7 +1,7 @@
 import api from '@/lib/api';
 import type { Robot, RobotCreate, RobotUpdate } from '@/types';
 
-export async function getAll(skip = 0, limit = 100): Promise<Robot[]> {
+export async function getAll(skip = 0, limit = 1000): Promise<Robot[]> {
     const { data } = await api.get(`/robots?skip=${skip}&limit=${limit}`);
     return data;
 }

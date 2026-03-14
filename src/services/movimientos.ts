@@ -1,7 +1,7 @@
 import api from '@/lib/api';
 import type { Movimiento, MovimientoCreate } from '@/types';
 
-export async function getAll(skip = 0, limit = 100, tipo?: string): Promise<Movimiento[]> {
+export async function getAll(skip = 0, limit = 1000, tipo?: string): Promise<Movimiento[]> {
     let url = `/movimientos?skip=${skip}&limit=${limit}`;
     if (tipo) url += `&tipo=${tipo}`;
     const { data } = await api.get(url);

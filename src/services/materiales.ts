@@ -1,8 +1,13 @@
 import api from '@/lib/api';
 import type { Material, MaterialCreate, MaterialUpdate, TipoMaterial } from '@/types';
 
-export async function getAll(skip = 0, limit = 100): Promise<Material[]> {
+export async function getAll(skip = 0, limit = 1000): Promise<Material[]> {
     const { data } = await api.get(`/materiales?skip=${skip}&limit=${limit}`);
+    return data;
+}
+
+export async function getStockMinimo(minimo: number = 5): Promise<Material[]> {
+    const { data } = await api.get(`/materiales/stock-minimo?minimo=${minimo}`);
     return data;
 }
 

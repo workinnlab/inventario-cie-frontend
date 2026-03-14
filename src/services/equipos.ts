@@ -1,8 +1,13 @@
 import api from '@/lib/api';
 import type { Equipo, EquipoCreate, EquipoUpdate } from '@/types';
 
-export async function getAll(skip = 0, limit = 100): Promise<Equipo[]> {
+export async function getAll(skip = 0, limit = 1000): Promise<Equipo[]> {
     const { data } = await api.get(`/equipos?skip=${skip}&limit=${limit}`);
+    return data;
+}
+
+export async function getByEstado(estado: string): Promise<Equipo[]> {
+    const { data } = await api.get(`/equipos?estado=${estado}`);
     return data;
 }
 

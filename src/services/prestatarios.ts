@@ -1,7 +1,7 @@
 import api from '@/lib/api';
 import type { Prestatario, PrestatarioCreate, PrestatarioUpdate } from '@/types';
 
-export async function getAll(skip = 0, limit = 100, activo?: boolean): Promise<Prestatario[]> {
+export async function getAll(skip = 0, limit = 1000, activo?: boolean): Promise<Prestatario[]> {
     let url = `/prestatarios?skip=${skip}&limit=${limit}`;
     if (activo !== undefined) url += `&activo=${activo}`;
     const { data } = await api.get(url);

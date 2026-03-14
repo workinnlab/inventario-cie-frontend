@@ -13,6 +13,7 @@ const pageTitles: Record<string, string> = {
     '/prestatarios': 'Prestatarios',
     '/prestamos': 'Préstamos',
     '/movimientos': 'Movimientos',
+    '/exportar': 'Exportar Datos',
 };
 
 export function Layout() {

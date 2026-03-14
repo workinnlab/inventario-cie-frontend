@@ -16,13 +16,15 @@ import Materiales from '@/pages/materiales';
 import Prestatarios from '@/pages/prestatarios';
 import Prestamos from '@/pages/prestamos';
 import Movimientos from '@/pages/movimientos';
+import Exportar from '@/pages/exportar';
 
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             retry: 1,
             refetchOnWindowFocus: false,
-            staleTime: 1000 * 60 * 5, // 5 minutes
+            staleTime: 1000 * 30, // 30 seconds — short enough to refetch after invalidation
+            refetchOnMount: true,
         },
     },
 });
@@ -47,6 +49,7 @@ function App() {
                                     <Route path="/prestatarios" element={<Prestatarios />} />
                                     <Route path="/prestamos" element={<Prestamos />} />
                                     <Route path="/movimientos" element={<Movimientos />} />
+                                    <Route path="/exportar" element={<Exportar />} />
                                     {/* Fallback */}
                                     <Route path="*" element={<Navigate to="/dashboard" replace />} />
                                 </Route>

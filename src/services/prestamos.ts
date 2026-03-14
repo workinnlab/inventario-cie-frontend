@@ -1,10 +1,15 @@
 import api from '@/lib/api';
 import type { Prestamo, PrestamoCreate, PrestamoUpdate } from '@/types';
 
-export async function getAll(skip = 0, limit = 100, estado?: string): Promise<Prestamo[]> {
+export async function getAll(skip = 0, limit = 1000, estado?: string): Promise<Prestamo[]> {
     let url = `/prestamos?skip=${skip}&limit=${limit}`;
     if (estado) url += `&estado=${estado}`;
     const { data } = await api.get(url);
+    return data;
+}
+
+export async function getPorVencer(dias: number = 7): Promise<Prestamo[]> {
+    const { data } = await api.get(`/prestamos/por-vencer?dias=${dias}`);
     return data;
 }
 

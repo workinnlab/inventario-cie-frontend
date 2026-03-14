@@ -1,4 +1,5 @@
-import { Monitor, Cpu, Bot, Package, ClipboardList, History as HistoryIcon, AlertTriangle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Monitor, Cpu, Bot, Package, ClipboardList, History as HistoryIcon, AlertTriangle, CheckCircle, RotateCw, Send, XCircle } from 'lucide-react';
 import { StatCard } from '@/components/ui/card';
 import { Badge, getEstadoBadgeVariant } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
@@ -10,6 +11,11 @@ import { useMateriales } from '@/hooks/use-materiales';
 import { usePrestamos } from '@/hooks/use-prestamos';
 import { useMovimientos } from '@/hooks/use-movimientos';
 import { formatDateTime } from '@/utils/formatters';
+import { AlertasPrestamos } from '@/components/alerts/AlertasPrestamos';
+import { AlertasStock } from '@/components/alerts/AlertasStock';
+import { AlertasEquipos } from '@/components/alerts/AlertasEquipos';
+import * as dashboardService from '@/services/dashboard';
+import type { DashboardResumen } from '@/services/dashboard';
 
 
 export default function DashboardPage() {
@@ -20,27 +26,26 @@ export default function DashboardPage() {
     const { prestamosActivos, isLoading: loadingPrestamos, isError: errorPrestamos } = usePrestamos();
     const { movimientos, isLoading: loadingMovimientos, isError: errorMovimientos } = useMovimientos();
 
+    const [resumen, setResumen] = useState<DashboardResumen | null>(null);
+    const [resumenLoading, setResumenLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadResumen() {
+            try {
+                const data = await dashboardService.getResumen();
+                setResumen(data);
+            } catch (err) {
+                console.error('Error cargando resumen del dashboard:', err);
+            } finally {
+                setResumenLoading(false);
+            }
+        }
+        loadResumen();
+    }, []);
+
     const loading = loadingEquipos || loadingElectronica || loadingRobots || loadingMateriales || loadingPrestamos || loadingMovimientos;
-    const isError = errorEquipos || errorElectronica || errorRobots || errorMateriales || errorPrestamos || errorMovimientos;
 
-    // Manejo de errores de API
-    if (isError) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-                <AlertTriangle className="h-12 w-12 text-destructive" />
-                <div className="text-center space-y-2">
-                    <h3 className="font-semibold">Error al cargar datos del dashboard</h3>
-                    <p className="text-sm text-muted-foreground">
-                        No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.
-                    </p>
-                </div>
-                <Button variant="outline" onClick={() => window.location.reload()}>
-                    Intentar de nuevo
-                </Button>
-            </div>
-        );
-    }
-
+    const hasPartialError = errorEquipos || errorElectronica || errorRobots || errorMateriales || errorPrestamos || errorMovimientos;
 
     if (loading) {
         return (
@@ -52,31 +57,101 @@ export default function DashboardPage() {
 
     return (
         <div className="space-y-6">
-            {/* Stats Grid */}
+            {/* ── Alerts Section ── */}
+            <section className="space-y-3">
+                <AlertasPrestamos />
+                <AlertasStock />
+                <AlertasEquipos />
+            </section>
+
+            {/* ── Partial Error Banner ── */}
+            {hasPartialError && (
+                <div className="rounded-xl border border-warning/30 bg-warning/5 px-4 py-3 flex items-center justify-between animate-fade-in">
+                    <div className="flex items-center gap-2 text-sm text-warning">
+                        <AlertTriangle className="h-4 w-4" />
+                        <span>Algunos datos no se pudieron cargar. Los datos mostrados podrían estar incompletos.</span>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+                        Reintentar
+                    </Button>
+                </div>
+            )}
+
+            {/* ── Stats Grid ── */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     title="Equipos"
-                    value={equipos.length}
+                    value={resumen?.totales?.equipos ?? equipos.length}
                     icon={<Monitor className="h-5 w-5" />}
                 />
                 <StatCard
                     title="Electrónica"
-                    value={electronica.length}
+                    value={resumen?.totales?.electronica ?? electronica.length}
                     icon={<Cpu className="h-5 w-5" />}
                 />
                 <StatCard
                     title="Robots"
-                    value={robots.length}
+                    value={resumen?.totales?.robots ?? robots.length}
                     icon={<Bot className="h-5 w-5" />}
                 />
                 <StatCard
                     title="Materiales"
-                    value={materiales.length}
+                    value={resumen?.totales?.materiales ?? materiales.length}
                     icon={<Package className="h-5 w-5" />}
                 />
             </div>
 
+            {/* ── Equipment & Loans by Status ── */}
+            {resumen && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                    {/* Equipos por Estado */}
+                    <div className="rounded-xl border bg-card p-5 space-y-3">
+                        <h2 className="font-semibold flex items-center gap-2 text-sm">
+                            <Monitor className="h-4 w-4 text-primary" />
+                            Equipos por Estado
+                        </h2>
+                        <div className="space-y-2">
+                            {[
+                                { label: 'Disponibles', value: resumen.equipos.disponibles, icon: <CheckCircle className="h-3.5 w-3.5" />, color: 'text-success' },
+                                { label: 'En Uso', value: resumen.equipos.en_uso, icon: <RotateCw className="h-3.5 w-3.5" />, color: 'text-primary' },
+                                { label: 'Prestados', value: resumen.equipos.prestados, icon: <Send className="h-3.5 w-3.5" />, color: 'text-warning' },
+                                { label: 'Dañados', value: resumen.equipos.danados, icon: <XCircle className="h-3.5 w-3.5" />, color: 'text-destructive' },
+                            ].map((item) => (
+                                <div key={item.label} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
+                                    <div className={`flex items-center gap-2 text-sm ${item.color}`}>
+                                        {item.icon}
+                                        <span className="text-foreground">{item.label}</span>
+                                    </div>
+                                    <span className="text-sm font-semibold">{item.value}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
+                    {/* Préstamos por Estado */}
+                    <div className="rounded-xl border bg-card p-5 space-y-3">
+                        <h2 className="font-semibold flex items-center gap-2 text-sm">
+                            <ClipboardList className="h-4 w-4 text-primary" />
+                            Préstamos por Estado
+                        </h2>
+                        <div className="space-y-2">
+                            {[
+                                { label: 'Activos', value: resumen.prestamos.activos, variant: 'success' as const },
+                                { label: 'Devueltos', value: resumen.prestamos.devueltos, variant: 'secondary' as const },
+                                { label: 'Vencidos', value: resumen.prestamos.vencidos, variant: 'destructive' as const },
+                                { label: 'Por Vencer (7 días)', value: resumen.prestamos.por_vencer_7_dias, variant: 'warning' as const },
+                            ].map((item) => (
+                                <div key={item.label} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
+                                    <span className="text-sm">{item.label}</span>
+                                    <Badge variant={item.variant}>{item.value}</Badge>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Active Loans & Recent Movements ── */}
             <div className="grid gap-6 lg:grid-cols-2">
                 {/* Active Loans */}
                 <div className="rounded-xl border bg-card p-5 space-y-4">

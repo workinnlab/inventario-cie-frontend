@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import {
-    LayoutDashboard, Monitor, Cpu, Bot, Package, Users, ClipboardList, History, ChevronLeft, ChevronRight,
+    LayoutDashboard, Monitor, Cpu, Bot, Package, Users, ClipboardList, History, Download, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useState } from 'react';
@@ -14,6 +14,7 @@ const navItems = [
     { to: '/prestatarios', icon: Users, label: 'Prestatarios' },
     { to: '/prestamos', icon: ClipboardList, label: 'Préstamos' },
     { to: '/movimientos', icon: History, label: 'Movimientos' },
+    { to: '/exportar', icon: Download, label: 'Exportar' },
 ];
 
 interface SidebarProps {
