@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 export const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://inventario-workinn-api.onrender.com/api/v1';
+    import.meta.env.VITE_API_URL || 'https://inventario-workinn-api.onrender.com/api/v1';//'http://localhost:8000/api/v1';
 
 const api = axios.create({
     baseURL: API_BASE_URL,

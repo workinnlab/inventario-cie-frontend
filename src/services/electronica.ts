@@ -1,8 +1,12 @@
 import api from '@/lib/api';
 import type { Electronica, ElectronicaCreate, ElectronicaUpdate } from '@/types';
 
-export async function getAll(skip = 0, limit = 100): Promise<Electronica[]> {
-    const { data } = await api.get(`/electronica?skip=${skip}&limit=${limit}`);
+export async function getAll(skip = 0, limit = 20, nombre?: string): Promise<Electronica[]> {
+    const params = new URLSearchParams({ 
+        skip: String(skip), 
+        limit: String(limit) });
+
+    const { data } = await api.get(`/electronica?${params.toString()}`);
     return data;
 }
 

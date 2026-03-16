@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table } from '@/components/ui/table';
 import { Modal } from '@/components/ui/modal';
+import { Pagination } from '@/components/ui/pagination';
 import { useToast } from '@/components/ui/toast';
 import { useAuth } from '@/contexts/auth-context';
 import { useElectronica } from '@/hooks/use-electronica';
@@ -14,8 +15,24 @@ import { Spinner } from '@/components/ui/spinner';
 
 
 export default function ElectronicaPage() {
-    const { electronica: items, isLoading, isError, error, createElectronica, updateElectronica, deleteElectronica, isCreating, isUpdating } = useElectronica();
-    const [search, setSearch] = useState('');
+    const {
+        electronica: items,
+        isLoading,
+        isError,
+        error,
+        createElectronica,
+        updateElectronica,
+        deleteElectronica,
+        isCreating,
+        isUpdating,
+        // Paginación y búsqueda ahora vienen del hook
+        page,
+        totalPages,
+        setPage,
+        search,
+        setSearch,
+    } = useElectronica();
+
     const [modalOpen, setModalOpen] = useState(false);
     const [deleteModal, setDeleteModal] = useState<Electronica | null>(null);
     const [editing, setEditing] = useState<Electronica | null>(null);
@@ -85,14 +102,29 @@ export default function ElectronicaPage() {
     return (
         <div className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                {/* Búsqueda — ahora controlada por el hook, llama a la API */}
                 <div className="relative max-w-sm flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input placeholder="Buscar..." value={search} onChange={(e) => setSearch(e.target.value)} className="flex h-9 w-full rounded-lg border border-input bg-transparent pl-9 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                    <input
+                        placeholder="Buscar..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="flex h-9 w-full rounded-lg border border-input bg-transparent pl-9 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    />
                 </div>
-                {canEdit && <Button onClick={openCreate}><Plus className="h-4 w-4" /> Nuevo</Button>}
+                {canEdit && (
+                    <Button onClick={openCreate}>
+                        <Plus className="h-4 w-4" /> Nuevo
+                    </Button>
+                )}
             </div>
-            <Table columns={columns} data={filtered} loading={isLoading} emptyMessage="No hay elementos" />
-
+ 
+            {/* Tabla — ya no usa `filtered`, usa directamente los items de la página actual */}
+            <Table columns={columns} data={items} loading={isLoading} emptyMessage="No hay elementos" />
+ 
+            {/* Paginación */}
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+ 
             <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? 'Editar' : 'Nuevo elemento'}>
                 <div className="space-y-3">
                     <Input label="Nombre" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required />
@@ -108,9 +140,9 @@ export default function ElectronicaPage() {
                             {editing ? (isUpdating ? <Spinner size="sm" /> : 'Guardar') : (isCreating ? <Spinner size="sm" /> : 'Crear')}
                         </Button>
                     </div>
-
                 </div>
             </Modal>
+ 
             <Modal open={!!deleteModal} onClose={() => setDeleteModal(null)} title="Confirmar eliminación">
                 <p className="text-sm text-muted-foreground mb-4">¿Eliminar <strong>{deleteModal?.nombre}</strong>?</p>
                 <div className="flex justify-end gap-2">
