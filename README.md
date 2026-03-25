@@ -26,6 +26,7 @@ Sistema de gestión de inventario para el **Centro de Innovación Educativa (CIE
 - [Buenas Prácticas](#-buenas-prácticas)
 - [Solución de Problemas](#-solución-de-problemas)
 - [Contribución](#-contribución)
+- [Documentación](#-documentación)
 - [Licencia](#-licencia)
 
 ---

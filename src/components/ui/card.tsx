@@ -11,10 +11,10 @@ export function Card({ children, className, glass }: CardProps) {
     return (
         <div
             className={cn(
-                'rounded-3xl border border-gray-100/50 transition-all duration-300',
+                'rounded-3xl border border-border transition-all duration-300',
                 glass
                     ? 'glass-card'
-                    : 'bg-white text-card-foreground shadow-[0_8px_30px_rgb(0,0,0,0.04)]',
+                    : 'bg-card text-card-foreground shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/20',
                 className,
             )}
         >
@@ -36,11 +36,11 @@ export function StatCard({ title, value, icon, trend, className }: StatCardProps
         <Card glass className={cn('p-5 hover:shadow-lg transition-shadow duration-300', className)}>
             <div className="flex items-start justify-between">
                 <div className="space-y-1">
-                    <p className="text-sm font-medium text-muted-foreground">{title}</p>
-                    <p className="text-2xl font-bold tracking-tight">{value}</p>
-                    {trend && <p className="text-xs text-muted-foreground">{trend}</p>}
+                    <p className="text-sm font-medium text-muted-foreground dark:text-slate-400">{title}</p>
+                    <p className="text-2xl font-bold tracking-tight text-foreground dark:text-white">{value}</p>
+                    {trend && <p className="text-xs text-muted-foreground dark:text-slate-400">{trend}</p>}
                 </div>
-                <div className="rounded-lg bg-primary/10 p-2.5 text-primary">{icon}</div>
+                <div className="rounded-lg bg-primary/10 dark:bg-primary/20 p-2.5 text-primary dark:text-primary-foreground">{icon}</div>
             </div>
         </Card>
     );

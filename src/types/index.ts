@@ -18,7 +18,7 @@ export interface RegisterRequest {
     email: string;
     password: string;
     nombre: string;
-    rol: 'admin' | 'inventory' | 'viewer';
+    rol?: 'admin' | 'inventory' | 'viewer';
 }
 
 export interface LoginResponse {

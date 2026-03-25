@@ -8,6 +8,7 @@ import { ProtectedRoute } from '@/components/layout/protected-route';
 
 // Pages
 import Login from '@/pages/login';
+import Registro from '@/pages/registro';
 import Dashboard from '@/pages/dashboard';
 import Equipos from '@/pages/equipos';
 import Electronica from '@/pages/electronica';
@@ -41,6 +42,7 @@ function App() {
                         <Router>
                             <Routes>
                                 <Route path="/login" element={<Login />} />
+                                    <Route path="/registro" element={<Registro />} />
 
                                 <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
                                     <Route path="/" element={<Navigate to="/dashboard" replace />} />

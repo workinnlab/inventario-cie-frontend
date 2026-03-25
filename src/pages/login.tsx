@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth-context';
 import { useTheme } from '@/contexts/theme-context';
 import { Button } from '@/components/ui/button';
@@ -158,9 +158,9 @@ export default function LoginPage() {
                     <footer className="text-center pt-2">
                         <p className="text-sm text-[#5a6062]">
                             ¿No tienes acceso? 
-                            <a className="font-bold text-[#4f645b] hover:text-[#43574f] underline decoration-[#4f645b]/30 underline-offset-4" href="#">
+                            <Link className="font-bold text-[#4f645b] hover:text-[#43574f] underline decoration-[#4f645b]/30 underline-offset-4" to="/registro">
                                 Solicitar registro
-                            </a>
+                            </Link>
                         </p>
                     </footer>
                 </div>

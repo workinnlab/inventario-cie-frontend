@@ -9,28 +9,29 @@
 
 1. [Introducción](#introducción)
 2. [Iniciar Sesión](#iniciar-sesión)
-3. [Navegación](#navegación)
+3. [Registro de Usuarios](#registro-de-usuarios)
+4. [Navegación](#navegación)
    - [Sidebar](#sidebar-barra-lateral)
    - [Encabezado](#encabezado-header)
    - [Colapsar Sidebar](#colapsar-sidebar)
-4. [Dashboard](#dashboard)
-5. [Inventario](#inventario)
+5. [Dashboard](#dashboard)
+6. [Inventario](#inventario)
    - [Equipos](#equipos)
    - [Electrónica](#electrónica)
    - [Robótica](#robótica)
    - [Materiales](#materiales)
-6. [Préstamos](#préstamos)
+7. [Préstamos](#préstamos)
    - [Crear Préstamo](#crear-préstamo)
    - [Devolver Préstamo](#devolver-préstamo)
-7. [Prestatarios](#prestatarios)
-8. [Movimientos](#movimientos)
-9. [Dañados](#dañados)
-10. [Reportes](#reportes)
-11. [Configuración](#configuración)
-12. [Notificaciones](#notificaciones)
-13. [Modo Oscuro](#modo-oscuro)
-14. [Glosario](#glosario)
-15. [Preguntas Frecuentes](#preguntas-frecuentes)
+8. [Prestatarios](#prestatarios)
+9. [Movimientos](#movimientos)
+10. [Dañados](#dañados)
+11. [Reportes](#reportes)
+12. [Configuración](#configuración)
+13. [Notificaciones](#notificaciones)
+14. [Modo Oscuro](#modo-oscuro)
+15. [Glosario](#glosario)
+16. [Preguntas Frecuentes](#preguntas-frecuentes)
 
 ---
 
@@ -61,6 +62,37 @@
 ### ¿Olvidaste tu contraseña?
 - Haz clic en el enlace **"¿Olvidaste tu contraseña?"** en la página de inicio de sesión
 - Contacta al administrador del sistema
+
+---
+
+## Registro de Usuarios
+
+### ¿Cómo registrarse?
+1. En la página de **Inicio de Sesión**, haz clic en **"Solicitar registro"**
+2. Completa el formulario con:
+   - **Nombre completo**: Tu nombre real
+   - **Correo electrónico**: Un correo válido (ej: tuemail@cie.com)
+   - **Contraseña**: Mínimo 6 caracteres
+3. Haz clic en **"Crear Cuenta"**
+
+### ¿Qué sucede después del registro?
+- Tu cuenta se crea automáticamente con rol **Viewer** (solo lectura)
+- Un administrador deberá aprobar tu acceso desde el panel de administración
+- Recibirás permisos adicionales según el rol que se te asigne
+
+### Roles del sistema
+| Rol | Descripción | Permisos |
+|-----|-------------|----------|
+| **Viewer** | Solo lectura | Ver inventario, préstamos y reportes |
+| **Inventory** | Gestión de inventario | CRUD de items, préstamos y prestatarios |
+| **Admin** | Acceso completo | CRUD total + gestión de usuarios + configuración |
+
+### Nota importante
+- El campo de rol en el formulario es informativo; todos los usuarios se registran como **Viewer**
+- La promoción de roles se realiza manualmente por un administrador desde la base de datos
+
+### ¿Olvidaste tu contraseña?
+- Contacta al administrador del sistema para restablecer tu contraseña
 
 ---
 
@@ -502,7 +534,15 @@ Haz clic en el **icono de sol/luna** en el header.
 ## Preguntas Frecuentes
 
 ### ¿Cómo obtengo acceso al sistema?
-Contacta al administrador del sistema para que te cree una cuenta.
+1. Ve a la página de login
+2. Haz clic en "Solicitar registro"
+3. Completa el formulario
+4. Un administrador aprobará tu cuenta desde el panel de administración
+
+### ¿Cómo obtengo más permisos que Viewer?
+- Los usuarios nuevos se registran como Viewer por defecto
+- Un administrador debe promover tu rol desde la base de datos (Supabase)
+- Contacta al administrador para solicitar acceso adicional
 
 ### ¿Puedo prestar más de un item a la vez?
 Sí, pero cada item requiere un préstamo separado.
