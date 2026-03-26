@@ -1,6 +1,6 @@
-# Manual de Usuario - Inventario CIE API
+# Manual de Usuario - Inventario CIE
 
-**Versión:** 1.0.0  
+**Versión:** 2.0.0  
 **Fecha:** Marzo 2026
 
 ---
@@ -204,6 +204,7 @@ Página para gestionar equipos de cómputo y accesorios.
   - Prestados
   - Mantenimiento
   - Dañados
+  - Arreglados
 - **Búsqueda** por nombre, código o marca
 - **Paginación** - 20 elementos por página
 
@@ -220,6 +221,8 @@ Página para gestionar equipos de cómputo y accesorios.
 | En Uso | Amarillo | Usando internamente |
 | Prestado | Gris | Prestado a usuario |
 | Mantenimiento | Amarillo | En reparación |
+| Dañado | Rojo | Con problemas |
+| Arreglado | Verde | Reparado y disponible |
 | Dañado | Rojo | Necesita reparación |
 
 ---
@@ -544,8 +547,13 @@ Haz clic en el **icono de sol/luna** en el header.
 - Un administrador debe promover tu rol desde la base de datos (Supabase)
 - Contacta al administrador para solicitar acceso adicional
 
-### ¿Puedo prestar más de un item a la vez?
-Sí, pero cada item requiere un préstamo separado.
+### ¿Cómo puedo devolver un préstamo vencido?
+- Los préstamos vencidos ahora se pueden devolver normalmente
+- Al devolver, el equipo vuelve automáticamente a estado "disponible"
+
+### ¿Puedo cambiar un equipo de "dañado" a "arreglado"?
+- Sí, edita el equipo y selecciona el estado "Arreglado"
+- Esto indica que el equipo fue reparado y está disponible nuevamente
 
 ### ¿Qué pasa si no devuelvo a tiempo?
 El préstamo se marcará como "vencido" y aparecerá en las alertas.
@@ -562,7 +570,7 @@ Sí, ve a la sección "Reportes" y elige el formato de exportación.
 
 Para dudas o problemas:
 - Email: soporte@cie.edu
-- Documentación técnica: docs/MANUAL_TECNICO.md
+- Help desk: En la barra lateral, haz clic en "Ayuda" para acceder al manual
 
 ---
 

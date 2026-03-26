@@ -3,7 +3,7 @@
 Sistema de gestión de inventario para el **Centro de Innovación Educativa (CIE)**. Una aplicación web moderna para el control de equipos, electrónica, robots, materiales, préstamos y prestatarios.
 
 ![Estado](https://img.shields.io/badge/estado-producción-green)
-![Versión](https://img.shields.io/badge/versión-1.0.0-blue)
+![Versión](https://img.shields.io/badge/versión-2.0.0-blue)
 ![React](https://img.shields.io/badge/React-18.2.0-61dafb?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3.2-3178c6?logo=typescript)
 ![Vite](https://img.shields.io/badge/Vite-5.0.4-646cff?logo=vite)
