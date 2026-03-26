@@ -188,10 +188,13 @@ export function Sidebar({ collapsed, onToggle, onAddNew }: SidebarProps) {
                 </Button>
 
                 <div className="flex flex-col gap-1 mt-2 pt-4 border-t border-slate-200 dark:border-slate-700">
-                    <button className={cn(
-                        "flex items-center gap-3 py-2.5 rounded-xl text-[#5a6062] dark:text-slate-400 hover:text-[#4f645b] dark:hover:text-emerald-400 transition-colors",
-                        collapsed ? "justify-center" : "px-4"
-                    )}>
+                    <button 
+                        onClick={() => window.open('/docs/MANUAL_USUARIO.pdf', '_blank')}
+                        className={cn(
+                            "flex items-center gap-3 py-2.5 rounded-xl text-[#5a6062] dark:text-slate-400 hover:text-[#4f645b] dark:hover:text-emerald-400 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-colors",
+                            collapsed ? "justify-center" : "px-4"
+                        )}
+                    >
                         <HelpCircle className="h-5 w-5 shrink-0" />
                         {!collapsed && <span className="text-sm font-medium">Ayuda</span>}
                     </button>

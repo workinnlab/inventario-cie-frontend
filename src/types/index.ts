@@ -36,7 +36,7 @@ export interface Equipo {
     codigo: string;
     accesorios?: string;
     serial?: string;
-    estado: 'disponible' | 'en uso' | 'prestado' | 'mantenimiento' | 'dañado';
+    estado: 'disponible' | 'en uso' | 'prestado' | 'mantenimiento' | 'dañado' | 'arreglado';
     created_at: string;
     updated_at: string;
 }

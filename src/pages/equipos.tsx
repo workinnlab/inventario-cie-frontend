@@ -19,9 +19,10 @@ const estadoOptions = [
     { value: 'prestado', label: 'Prestado' },
     { value: 'mantenimiento', label: 'Mantenimiento' },
     { value: 'dañado', label: 'Dañado' },
+    { value: 'arreglado', label: 'Arreglado' },
 ];
 
-const tabs = ['Todos', 'Disponibles', 'En Uso', 'Prestados', 'Mantenimiento', 'Dañados'];
+const tabs = ['Todos', 'Disponibles', 'En Uso', 'Prestados', 'Mantenimiento', 'Dañados', 'Arreglados'];
 
 const getIcon = (nombre: string) => {
     const n = nombre.toLowerCase();
@@ -114,6 +115,7 @@ export default function EquiposPage() {
         else if (activeTab === 'Prestados') matchesTab = e.estado === 'prestado';
         else if (activeTab === 'Mantenimiento') matchesTab = e.estado === 'mantenimiento';
         else if (activeTab === 'Dañados') matchesTab = e.estado === 'dañado';
+        else if (activeTab === 'Arreglados') matchesTab = e.estado === 'arreglado';
         
         return matchesSearch && matchesTab;
     });
@@ -132,6 +134,7 @@ export default function EquiposPage() {
             case 'prestado': return 'secondary';
             case 'mantenimiento': return 'warning';
             case 'dañado': return 'destructive';
+            case 'arreglado': return 'success';
             default: return 'secondary';
         }
     };
