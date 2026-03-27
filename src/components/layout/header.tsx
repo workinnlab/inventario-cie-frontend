@@ -49,12 +49,19 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
     };
 
     const notificaciones = [
-        { id: 1, titulo: 'Préstamo por vencer', descripcion: 'El préstamo #123 vence mañana', tipo: 'warning', leida: false },
-        { id: 2, titulo: 'Stock bajo', descripcion: 'Filamento PLA Blanco tiene stock bajo', tipo: 'error', leida: false },
-        { id: 3, titulo: 'Préstamo devuelto', descripcion: 'El equipo MacBook Pro fue devuelto', tipo: 'success', leida: true },
+        { id: 1, titulo: 'Préstamo por vencer', descripcion: 'El préstamo #123 vence mañana', tipo: 'warning', leida: false, ruta: '/prestamos?tab=vencidos' },
+        { id: 2, titulo: 'Stock bajo', descripcion: 'Filamento PLA Blanco tiene stock bajo', tipo: 'error', leida: false, ruta: '/materiales' },
+        { id: 3, titulo: 'Préstamo devuelto', descripcion: 'El equipo MacBook Pro fue devuelto', tipo: 'success', leida: true, ruta: '/prestamos' },
+        { id: 4, titulo: 'Equipo dañado', descripcion: 'Se reportó un equipo como dañado', tipo: 'error', leida: false, ruta: '/danados' },
+        { id: 5, titulo: 'Nuevo préstamo', descripcion: 'Se registró un nuevo préstamo', tipo: 'success', leida: false, ruta: '/prestamos' },
     ];
 
     const notificacionesNoLeidas = notificaciones.filter(n => !n.leida).length;
+
+    const handleNotifClick = (ruta: string) => {
+        setNotifOpen(false);
+        navigate(ruta);
+    };
 
     return (
         <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b bg-white/70 backdrop-blur-xl px-8 shadow-sm shadow-emerald-900/5 dark:bg-slate-900/70 dark:border-slate-700">
@@ -111,6 +118,7 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                                 {notificaciones.map((notif) => (
                                     <div 
                                         key={notif.id}
+                                        onClick={() => handleNotifClick(notif.ruta)}
                                         className={cn(
                                             "px-4 py-3 border-b hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition-colors",
                                             !notif.leida && "bg-blue-50/50 dark:bg-blue-900/20"
@@ -140,6 +148,7 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                             </div>
                             <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 text-center">
                                 <button 
+                                    onClick={() => handleNotifClick('/prestamos')}
                                     className="text-sm font-semibold text-[#4f645b] dark:text-emerald-400 hover:underline"
                                 >
                                     Ver todas las notificaciones
