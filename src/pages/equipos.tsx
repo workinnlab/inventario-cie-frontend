@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Plus, Pencil, Trash2, Search, AlertTriangle, Download, Filter, ArrowLeft, Monitor, Keyboard, Server, Armchair } from 'lucide-react';
+import { Plus, Undo2, Trash2, Search, Filter, AlertTriangle, Monitor, Keyboard, Server, Armchair, Pencil, Download, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
 import { Table } from '@/components/ui/table';
 import { Modal } from '@/components/ui/modal';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/toast';
 import { useAuth } from '@/contexts/auth-context';
 import { useEquipos } from '@/hooks/use-equipos';
-import { Spinner } from '@/components/ui/spinner';
-import type { Equipo, EquipoCreate } from '@/types';
+import { formatDate } from '@/utils/formatters';
 import { getErrorMessage } from '@/utils/error-handler';
+import type { Equipo, EquipoCreate } from '@/types';
+import { Spinner } from '@/components/ui/spinner';
 
 const estadoOptions = [
     { value: 'disponible', label: 'Disponible' },
@@ -41,7 +43,7 @@ export default function EquiposPage() {
     const [modalOpen, setModalOpen] = useState(searchParams.get('new') === 'true');
     const [deleteModal, setDeleteModal] = useState<Equipo | null>(null);
     const [editing, setEditing] = useState<Equipo | null>(null);
-    const [form, setForm] = useState<EquipoCreate>({
+    const [form, setForm] = useState<any>({
         nombre: '', marca: '', codigo: '', accesorios: '', serial: '', estado: 'disponible',
     });
     const [currentPage, setCurrentPage] = useState(1);
@@ -306,6 +308,12 @@ export default function EquiposPage() {
                     <Input label="Código" value={form.codigo} onChange={(e) => setForm({ ...form, codigo: e.target.value })} required />
                     <Input label="Serial" value={form.serial || ''} onChange={(e) => setForm({ ...form, serial: e.target.value })} />
                     <Input label="Accesorios" value={form.accesorios || ''} onChange={(e) => setForm({ ...form, accesorios: e.target.value })} />
+                    <Select
+                        label="Estado"
+                        value={form.estado}
+                        onChange={(e) => setForm({ ...form, estado: e.target.value })}
+                        options={estadoOptions}
+                    />
                     <div className="flex justify-end gap-3 pt-4">
                         <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button>
                         <Button onClick={handleSave} disabled={isCreating || isUpdating} className="px-8">
