@@ -1,10 +1,19 @@
-import { Bell, LogOut, Search, Menu, UserCircle, Moon, Sun, X, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Bell, LogOut, Search, Menu, UserCircle, Moon, Sun, X, AlertTriangle, CheckCircle, Trash2 } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { useTheme } from '@/contexts/theme-context';
 import { Button } from '@/components/ui/button';
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/utils/cn';
+
+interface Notificacion {
+    id: number;
+    titulo: string;
+    descripcion: string;
+    tipo: 'warning' | 'error' | 'success';
+    leida: boolean;
+    ruta: string;
+}
 
 interface HeaderProps {
     title: string;
@@ -18,6 +27,13 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [notifOpen, setNotifOpen] = useState(false);
+    const [notificaciones, setNotificaciones] = useState<Notificacion[]>([
+        { id: 1, titulo: 'Préstamo por vencer', descripcion: 'El préstamo #123 vence mañana', tipo: 'warning', leida: false, ruta: '/prestamos?tab=vencidos' },
+        { id: 2, titulo: 'Stock bajo', descripcion: 'Filamento PLA Blanco tiene stock bajo', tipo: 'error', leida: false, ruta: '/materiales' },
+        { id: 3, titulo: 'Préstamo devuelto', descripcion: 'El equipo MacBook Pro fue devuelto', tipo: 'success', leida: true, ruta: '/prestamos' },
+        { id: 4, titulo: 'Equipo dañado', descripcion: 'Se reportó un equipo como dañado', tipo: 'error', leida: false, ruta: '/danados' },
+        { id: 5, titulo: 'Nuevo préstamo', descripcion: 'Se registró un nuevo préstamo', tipo: 'success', leida: false, ruta: '/prestamos' },
+    ]);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const notifRef = useRef<HTMLDivElement>(null);
 
@@ -48,19 +64,23 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
         }
     };
 
-    const notificaciones = [
-        { id: 1, titulo: 'Préstamo por vencer', descripcion: 'El préstamo #123 vence mañana', tipo: 'warning', leida: false, ruta: '/prestamos?tab=vencidos' },
-        { id: 2, titulo: 'Stock bajo', descripcion: 'Filamento PLA Blanco tiene stock bajo', tipo: 'error', leida: false, ruta: '/materiales' },
-        { id: 3, titulo: 'Préstamo devuelto', descripcion: 'El equipo MacBook Pro fue devuelto', tipo: 'success', leida: true, ruta: '/prestamos' },
-        { id: 4, titulo: 'Equipo dañado', descripcion: 'Se reportó un equipo como dañado', tipo: 'error', leida: false, ruta: '/danados' },
-        { id: 5, titulo: 'Nuevo préstamo', descripcion: 'Se registró un nuevo préstamo', tipo: 'success', leida: false, ruta: '/prestamos' },
-    ];
-
     const notificacionesNoLeidas = notificaciones.filter(n => !n.leida).length;
 
-    const handleNotifClick = (ruta: string) => {
+    const handleNotifClick = (id: number, ruta: string) => {
+        // Marcar como leída
+        setNotificaciones(prev => prev.map(n => 
+            n.id === id ? { ...n, leida: true } : n
+        ));
         setNotifOpen(false);
         navigate(ruta);
+    };
+
+    const marcarTodasLeidas = () => {
+        setNotificaciones(prev => prev.map(n => ({ ...n, leida: true })));
+    };
+
+    const limpiarNotificaciones = () => {
+        setNotificaciones([]);
     };
 
     return (
@@ -115,45 +135,63 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                                 </button>
                             </div>
                             <div className="max-h-80 overflow-y-auto">
-                                {notificaciones.map((notif) => (
-                                    <div 
-                                        key={notif.id}
-                                        onClick={() => handleNotifClick(notif.ruta)}
-                                        className={cn(
-                                            "px-4 py-3 border-b hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition-colors",
-                                            !notif.leida && "bg-blue-50/50 dark:bg-blue-900/20"
-                                        )}
-                                    >
-                                        <div className="flex items-start gap-3">
-                                            <div className={cn(
-                                                "h-8 w-8 rounded-full flex items-center justify-center shrink-0",
-                                                notif.tipo === 'warning' && "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-600 dark:text-yellow-400",
-                                                notif.tipo === 'error' && "bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400",
-                                                notif.tipo === 'success' && "bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400"
-                                            )}>
-                                                {notif.tipo === 'warning' && <AlertTriangle className="h-4 w-4" />}
-                                                {notif.tipo === 'error' && <AlertTriangle className="h-4 w-4" />}
-                                                {notif.tipo === 'success' && <CheckCircle className="h-4 w-4" />}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-semibold text-[#2d3335] dark:text-white">{notif.titulo}</p>
-                                                <p className="text-xs text-muted-foreground dark:text-slate-400 truncate">{notif.descripcion}</p>
-                                            </div>
-                                            {!notif.leida && (
-                                                <div className="h-2 w-2 rounded-full bg-blue-500 shrink-0 mt-1"></div>
-                                            )}
-                                        </div>
+                                {notificaciones.length === 0 ? (
+                                    <div className="px-4 py-8 text-center text-muted-foreground">
+                                        <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                                        <p>No tienes notificaciones</p>
                                     </div>
-                                ))}
+                                ) : (
+                                    <>
+                                        {notificaciones.map((notif) => (
+                                            <div 
+                                                key={notif.id}
+                                                onClick={() => handleNotifClick(notif.id, notif.ruta)}
+                                                className={cn(
+                                                    "px-4 py-3 border-b hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition-colors",
+                                                    !notif.leida && "bg-blue-50/50 dark:bg-blue-900/20"
+                                                )}
+                                            >
+                                                <div className="flex items-start gap-3">
+                                                    <div className={cn(
+                                                        "h-8 w-8 rounded-full flex items-center justify-center shrink-0",
+                                                        notif.tipo === 'warning' && "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-600 dark:text-yellow-400",
+                                                        notif.tipo === 'error' && "bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400",
+                                                        notif.tipo === 'success' && "bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400"
+                                                    )}>
+                                                        {notif.tipo === 'warning' && <AlertTriangle className="h-4 w-4" />}
+                                                        {notif.tipo === 'error' && <AlertTriangle className="h-4 w-4" />}
+                                                        {notif.tipo === 'success' && <CheckCircle className="h-4 w-4" />}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-semibold text-[#2d3335] dark:text-white">{notif.titulo}</p>
+                                                        <p className="text-xs text-muted-foreground dark:text-slate-400 truncate">{notif.descripcion}</p>
+                                                    </div>
+                                                    {!notif.leida && (
+                                                        <div className="h-2 w-2 rounded-full bg-blue-500 shrink-0 mt-1"></div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </>
+                                )}
                             </div>
-                            <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 text-center">
-                                <button 
-                                    onClick={() => handleNotifClick('/prestamos')}
-                                    className="text-sm font-semibold text-[#4f645b] dark:text-emerald-400 hover:underline"
-                                >
-                                    Ver todas las notificaciones
-                                </button>
-                            </div>
+                            {notificaciones.length > 0 && (
+                                <div className="px-4 py-2 bg-slate-50 dark:bg-slate-700/50 flex justify-between items-center">
+                                    <button 
+                                        onClick={marcarTodasLeidas}
+                                        className="text-xs font-semibold text-[#4f645b] dark:text-emerald-400 hover:underline"
+                                    >
+                                        Marcar todas como leídas
+                                    </button>
+                                    <button 
+                                        onClick={limpiarNotificaciones}
+                                        className="text-xs font-semibold text-red-500 hover:underline flex items-center gap-1"
+                                    >
+                                        <Trash2 className="h-3 w-3" />
+                                        Limpiar
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
