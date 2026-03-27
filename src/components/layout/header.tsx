@@ -178,6 +178,12 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                             {notificaciones.length > 0 && (
                                 <div className="px-4 py-2 bg-slate-50 dark:bg-slate-700/50 flex justify-between items-center">
                                     <button 
+                                        onClick={() => { setNotifOpen(false); navigate('/notificaciones'); }}
+                                        className="text-xs font-semibold text-[#4f645b] dark:text-emerald-400 hover:underline"
+                                    >
+                                        Ver todas las notificaciones
+                                    </button>
+                                    <button 
                                         onClick={marcarTodasLeidas}
                                         className="text-xs font-semibold text-[#4f645b] dark:text-emerald-400 hover:underline"
                                     >
@@ -189,6 +195,16 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                                     >
                                         <Trash2 className="h-3 w-3" />
                                         Limpiar
+                                    </button>
+                                </div>
+                            )}
+                            {notificaciones.length === 0 && (
+                                <div className="px-4 py-2 bg-slate-50 dark:bg-slate-700/50">
+                                    <button 
+                                        onClick={() => { setNotifOpen(false); navigate('/notificaciones'); }}
+                                        className="text-xs font-semibold text-[#4f645b] dark:text-emerald-400 hover:underline w-full text-center"
+                                    >
+                                        Ver todas las notificaciones
                                     </button>
                                 </div>
                             )}

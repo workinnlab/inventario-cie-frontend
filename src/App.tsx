@@ -23,6 +23,7 @@ import Danados from '@/pages/danados';
 import Movimientos from '@/pages/movimientos';
 import Reportes from '@/pages/reportes';
 import Configuracion from '@/pages/configuracion';
+import Notificaciones from '@/pages/notificaciones';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -62,6 +63,7 @@ function App() {
                                     <Route path="/danados" element={<Danados />} />
                                     <Route path="/reportes" element={<Reportes />} />
                                     <Route path="/configuracion" element={<Configuracion />} />
+                                    <Route path="/notificaciones" element={<Notificaciones />} />
                                     {/* Fallback */}
                                     <Route path="*" element={<Navigate to="/dashboard" replace />} />
                                 </Route>
