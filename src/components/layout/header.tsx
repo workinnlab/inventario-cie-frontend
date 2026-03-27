@@ -1,4 +1,4 @@
-import { Bell, LogOut, Search, Menu, UserCircle, Moon, Sun, X, AlertTriangle, CheckCircle, Trash2 } from 'lucide-react';
+import { Bell, LogOut, Search, Menu, UserCircle, Moon, Sun, X, AlertTriangle, CheckCircle, Trash2, Check } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { useTheme } from '@/contexts/theme-context';
 import { Button } from '@/components/ui/button';
@@ -176,35 +176,38 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                                 )}
                             </div>
                             {notificaciones.length > 0 && (
-                                <div className="px-4 py-2 bg-slate-50 dark:bg-slate-700/50 flex justify-between items-center">
+                                <div className="px-4 py-2 bg-slate-50 dark:bg-slate-700/50 flex justify-center gap-6">
                                     <button 
                                         onClick={() => { setNotifOpen(false); navigate('/notificaciones'); }}
-                                        className="text-xs font-semibold text-[#4f645b] dark:text-emerald-400 hover:underline"
+                                        className="text-[#4f645b] dark:text-emerald-400 hover:text-[#3a5046] dark:hover:text-emerald-300 p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-600"
+                                        title="Ver todas"
                                     >
-                                        Ver todas las notificaciones
+                                        <Bell className="h-4 w-4" />
                                     </button>
                                     <button 
                                         onClick={marcarTodasLeidas}
-                                        className="text-xs font-semibold text-[#4f645b] dark:text-emerald-400 hover:underline"
+                                        className="text-[#4f645b] dark:text-emerald-400 hover:text-[#3a5046] dark:hover:text-emerald-300 p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-600"
+                                        title="Marcar todas como leídas"
                                     >
-                                        Marcar todas como leídas
+                                        <Check className="h-4 w-4" />
                                     </button>
                                     <button 
                                         onClick={limpiarNotificaciones}
-                                        className="text-xs font-semibold text-red-500 hover:underline flex items-center gap-1"
+                                        className="text-red-500 hover:text-red-600 p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
+                                        title="Limpiar todo"
                                     >
-                                        <Trash2 className="h-3 w-3" />
-                                        Limpiar
+                                        <Trash2 className="h-4 w-4" />
                                     </button>
                                 </div>
                             )}
                             {notificaciones.length === 0 && (
-                                <div className="px-4 py-2 bg-slate-50 dark:bg-slate-700/50">
+                                <div className="px-4 py-2 bg-slate-50 dark:bg-slate-700/50 flex justify-center">
                                     <button 
                                         onClick={() => { setNotifOpen(false); navigate('/notificaciones'); }}
-                                        className="text-xs font-semibold text-[#4f645b] dark:text-emerald-400 hover:underline w-full text-center"
+                                        className="text-[#4f645b] dark:text-emerald-400 hover:text-[#3a5046] dark:hover:text-emerald-300 p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-600"
+                                        title="Ver todas"
                                     >
-                                        Ver todas las notificaciones
+                                        <Bell className="h-4 w-4" />
                                     </button>
                                 </div>
                             )}
