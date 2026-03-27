@@ -140,7 +140,7 @@ export default function PrestamosPage() {
             className: 'w-24 text-right',
             render: (p: Prestamo) => (
                 <div className="flex justify-end gap-2 pr-4">
-                    {p.estado === 'activo' && canEdit && (
+                    {(p.estado === 'activo' || p.estado === 'vencido') && canEdit && (
                         <button className="text-muted-foreground hover:text-[#4f645b] transition-colors p-2" title="Devolver" onClick={() => handleDevolver(p.id)}>
                             <Undo2 className="h-4 w-4" />
                         </button>
