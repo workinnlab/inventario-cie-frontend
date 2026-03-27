@@ -15,10 +15,19 @@ import { getErrorMessage } from '@/utils/error-handler';
 import type { Equipo, EquipoCreate } from '@/types';
 import { Spinner } from '@/components/ui/spinner';
 
-const estadoOptions = [
+const estadoOptionsAll = [
     { value: 'disponible', label: 'Disponible' },
     { value: 'en uso', label: 'En uso' },
     { value: 'prestado', label: 'Prestado' },
+    { value: 'mantenimiento', label: 'Mantenimiento' },
+    { value: 'dañado', label: 'Dañado' },
+    { value: 'arreglado', label: 'Arreglado' },
+];
+
+// Estados que se pueden seleccionar manualmente (sin "prestado" que es automático)
+const estadoOptionsEditable = [
+    { value: 'disponible', label: 'Disponible' },
+    { value: 'en uso', label: 'En uso' },
     { value: 'mantenimiento', label: 'Mantenimiento' },
     { value: 'dañado', label: 'Dañado' },
     { value: 'arreglado', label: 'Arreglado' },
@@ -82,11 +91,15 @@ export default function EquiposPage() {
 
     const handleSave = async () => {
         try {
+            // Si el estado es "arreglado", cambiar automáticamente a "disponible"
+            const estadoFinal = form.estado === 'arreglado' ? 'disponible' : form.estado;
+            const dataToSave = { ...form, estado: estadoFinal };
+            
             if (editing) {
-                await updateEquipo({ id: editing.id, data: form });
-                toast('Equipo actualizado', 'success');
+                await updateEquipo({ id: editing.id, data: dataToSave });
+                toast(estadoFinal === 'disponible' ? 'Equipo marcado como arreglado y disponible' : 'Equipo actualizado', 'success');
             } else {
-                await createEquipo(form);
+                await createEquipo(dataToSave);
                 toast('Equipo creado', 'success');
             }
             setModalOpen(false);
@@ -312,7 +325,7 @@ export default function EquiposPage() {
                         label="Estado"
                         value={form.estado}
                         onChange={(e) => setForm({ ...form, estado: e.target.value })}
-                        options={estadoOptions}
+                        options={estadoOptionsEditable}
                     />
                     <div className="flex justify-end gap-3 pt-4">
                         <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button>
