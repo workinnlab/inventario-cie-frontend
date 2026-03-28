@@ -32,20 +32,20 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-fade-in"
+                className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm animate-fade-in"
                 onClick={onClose}
             />
             {/* Panel */}
             <div
                 className={cn(
-                    'relative z-50 w-full max-w-lg rounded-xl border bg-card p-6 shadow-xl animate-scale-in',
+                    'relative z-50 w-full max-w-lg rounded-xl border bg-white dark:bg-[#22214d] p-6 shadow-xl animate-scale-in',
                     'max-h-[90vh] overflow-y-auto',
                     className,
                 )}
             >
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold">{title}</h2>
-                    <Button variant="ghost" size="icon" onClick={onClose}>
+                    <h2 className="text-lg font-semibold text-[#2d3335] dark:text-[#fdfdfd]">{title}</h2>
+                    <Button variant="ghost" size="icon" onClick={onClose} className="dark:text-[#dddeff] dark:hover:bg-[#292a69]">
                         <X className="h-4 w-4" />
                     </Button>
                 </div>
