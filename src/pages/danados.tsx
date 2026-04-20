@@ -2,14 +2,16 @@ import { useState, useMemo } from 'react';
 import { useEquipos } from '@/hooks/use-equipos';
 import { useElectronica } from '@/hooks/use-electronica';
 import { useRobotica } from '@/hooks/use-robotica';
-import { AlertTriangle, Search, RefreshCw, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
+import { AlertTriangle, Search, RefreshCw, CheckCircle, XCircle, ArrowLeft, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table } from '@/components/ui/table';
 import { Spinner } from '@/components/ui/spinner';
+import { useToast } from '@/components/ui/toast';
 import { usePagination } from '@/hooks/use-pagination';
 import type { Column } from '@/types';
-import type { Equipo, Electronica, Robot } from '@/types';
+import type { Equipo, Electronica, Robot, EquipoUpdate } from '@/types';
+import { getErrorMessage } from '@/utils/error-handler';
 
 interface DanadoItem {
     id: number;
@@ -23,13 +25,61 @@ interface DanadoItem {
 const tabs = ['Todos', 'Equipos', 'Electrónica', 'Robótica'];
 
 export default function DanadosPage() {
-    const { equipos, isLoading: loadingEquipos } = useEquipos();
-    const { robots, isLoading: loadingRobots } = useRobotica();
+    const { equipos, isLoading: loadingEquipos, updateEquipo: actualizarEquipo } = useEquipos();
+    const { robots, isLoading: loadingRobots, updateRobot: actualizarRobot } = useRobotica();
     const { electronica, isLoading: loadingElectronica } = useElectronica();
     const [activeTab, setActiveTab] = useState('Todos');
     const [search, setSearch] = useState('');
+    const [repairingId, setRepairingId] = useState<number | null>(null);
+    const [repairingTipo, setRepairingTipo] = useState<'equipo' | 'robot' | 'electronica' | null>(null);
+    const { toast } = useToast();
 
     const isLoading = loadingEquipos || loadingElectronica || loadingRobots;
+
+    const handleRepair = async (item: DanadoItem) => {
+        try {
+            setRepairingId(item.id);
+            setRepairingTipo(item.tipo);
+            if (item.tipo === 'equipo') {
+                const equipo = equipos.find(e => e.id === item.id);
+                if (equipo) {
+                    await actualizarEquipo({ id: item.id, data: { estado: 'disponible' as any } });
+                    toast(`✅ ${equipo.nombre} marcado como disponible`, 'success');
+                }
+            } else if (item.tipo === 'robot') {
+                const robot = robots.find(r => r.id === item.id);
+                if (robot) {
+                    const nuevoDisponible = robot.fuera_de_servicio;
+                    await actualizarRobot({ id: item.id, data: { disponible: nuevoDisponible, fuera_de_servicio: 0 } });
+                    toast(`✅ ${robot.nombre} marcado como disponible`, 'success');
+                }
+            }
+        } catch (err: any) {
+            toast(getErrorMessage(err), 'error');
+        } finally {
+            setRepairingId(null);
+            setRepairingTipo(null);
+        }
+    };
+
+    const handleMantenimiento = async (item: DanadoItem) => {
+        try {
+            setRepairingId(item.id);
+            setRepairingTipo(item.tipo);
+            if (item.tipo === 'equipo') {
+                const equipo = equipos.find(e => e.id === item.id);
+                if (equipo) {
+                    await actualizarEquipo({ id: item.id, data: { estado: 'mantenimiento' as any } });
+                    toast(`🔧 ${equipo.nombre} enviado a mantenimiento`, 'success');
+                }
+            }
+        } catch (err: any) {
+            toast(getErrorMessage(err), 'error');
+        } finally {
+            setRepairingId(null);
+            setRepairingTipo(null);
+        }
+    };
 
     const equiposDanados = equipos.filter(e => e.estado === 'dañado' || e.estado === 'mantenimiento');
     const robotsDanados = robots.filter(r => r.fuera_de_servicio > 0);
@@ -132,6 +182,45 @@ export default function DanadosPage() {
                     {item.estado === 'dañado' ? 'Dañado' : item.estado === 'mantenimiento' ? 'Mantenimiento' : 'Fuera de servicio'}
                 </Badge>
             ),
+        },
+        {
+            key: 'actions',
+            header: '',
+            className: 'w-40',
+            render: (item: DanadoItem) => {
+                const isRepairing = repairingId === item.id && repairingTipo === item.tipo;
+                const estado = item.estado;
+                const esDanado = estado === 'dañado';
+                const esMantenimiento = estado === 'mantenimiento';
+                
+                return (
+                    <div className="flex gap-1">
+                        <button
+                            onClick={(ev) => { ev.stopPropagation(); handleRepair(item); }}
+                            disabled={isRepairing}
+                            className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors font-medium text-xs"
+                            title="Marcar como disponible"
+                        >
+                            {isRepairing ? (
+                                <Spinner size="sm" />
+                            ) : (
+                                <Wrench className="h-3 w-3" />
+                            )}
+                            <span>Reparar</span>
+                        </button>
+                        {(esDanado || esMantenimiento) && (
+                            <button
+                                onClick={(ev) => { ev.stopPropagation(); handleMantenimiento(item); }}
+                                disabled={isRepairing}
+                                className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors font-medium text-xs"
+                                title="Enviar a mantenimiento"
+                            >
+                                <span>En Mantto</span>
+                            </button>
+                        )}
+                    </div>
+                );
+            },
         },
     ];
 

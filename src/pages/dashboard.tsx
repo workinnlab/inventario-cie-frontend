@@ -54,6 +54,16 @@ export default function DashboardPage() {
     const totalMateriales = resumen?.totales?.materiales || 0;
     const prestamosActivos = resumen?.prestamos?.activos || 0;
 
+    const disponibles = resumen?.equipos?.disponibles || 0;
+    const enUso = resumen?.equipos?.en_uso || 0;
+    const prestados = resumen?.equipos?.prestados || 0;
+    const danados = resumen?.equipos?.danados || 0;
+    const totalEstado = disponibles + enUso + prestados + danados || 1;
+    const pctDisponibles = Math.round((disponibles / totalEstado) * 100);
+    const pctEnUso = Math.round((enUso / totalEstado) * 100);
+    const pctPrestados = Math.round((prestados / totalEstado) * 100);
+    const pctDanados = Math.round((danados / totalEstado) * 100);
+
     return (
         <div className="space-y-8 animate-fade-in pb-8">
             {/* Alert Section: Asymmetric Banner Layout */}
@@ -201,7 +211,7 @@ export default function DashboardPage() {
                                     <span className="font-bold text-[#4f645b] dark:text-[#9fb3ff]">{resumen?.equipos?.disponibles || 0} unidades</span>
                                 </div>
                                 <div className="w-full bg-white dark:bg-[#292a69] rounded-full h-2 overflow-hidden">
-                                    <div className="bg-[#4f645b] dark:bg-[#5a62b8] h-full w-[62%] rounded-full"></div>
+                                    <div className="bg-[#4f645b] dark:bg-[#5a62b8] h-full rounded-full transition-all duration-500" style={{ width: `${pctDisponibles}%` }}></div>
                                 </div>
                             </div>
                         </div>
@@ -215,7 +225,7 @@ export default function DashboardPage() {
                                     <span className="font-bold text-[#486277] dark:text-[#9fb3ff]">{resumen?.equipos?.en_uso || 0} unidades</span>
                                 </div>
                                 <div className="w-full bg-white dark:bg-[#292a69] rounded-full h-2 overflow-hidden">
-                                    <div className="bg-[#486277] dark:bg-[#5a62b8] h-full w-[20%] rounded-full"></div>
+                                    <div className="bg-[#486277] dark:bg-[#5a62b8] h-full rounded-full transition-all duration-500" style={{ width: `${pctEnUso}%` }}></div>
                                 </div>
                             </div>
                         </div>
@@ -229,7 +239,7 @@ export default function DashboardPage() {
                                     <span className="font-bold text-[#516170] dark:text-[#9fb3ff]">{resumen?.equipos?.prestados || 0} unidades</span>
                                 </div>
                                 <div className="w-full bg-white dark:bg-[#292a69] rounded-full h-2 overflow-hidden">
-                                    <div className="bg-[#516170] dark:bg-[#5a62b8] h-full w-[13%] rounded-full"></div>
+                                    <div className="bg-[#516170] dark:bg-[#5a62b8] h-full rounded-full transition-all duration-500" style={{ width: `${pctPrestados}%` }}></div>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +253,7 @@ export default function DashboardPage() {
                                     <span className="font-bold text-[#a83836] dark:text-[#ff9fb3]">{resumen?.equipos?.danados || 0} unidades</span>
                                 </div>
                                 <div className="w-full bg-white dark:bg-[#292a69] rounded-full h-2 overflow-hidden">
-                                    <div className="bg-[#a83836] dark:bg-[#e53f67] h-full w-[5%] rounded-full"></div>
+                                    <div className="bg-[#a83836] dark:bg-[#e53f67] h-full rounded-full transition-all duration-500" style={{ width: `${pctDanados}%` }}></div>
                                 </div>
                             </div>
                         </div>
