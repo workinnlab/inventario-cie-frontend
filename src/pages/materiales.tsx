@@ -259,6 +259,7 @@ export default function MaterialesPage() {
                     </div>
                     <Input label="Stock" type="number" value={form.en_stock} onChange={(e) => setForm({ ...form, en_stock: parseInt(e.target.value) || 0 })} />
                     <Input label="En Uso" type="number" value={form.en_uso} onChange={(e) => setForm({ ...form, en_uso: parseInt(e.target.value) || 0 })} />
+                    <Input label="Usado" type="number" value={form.usado} onChange={(e) => setForm({ ...form, usado: parseInt(e.target.value) || 0 })} />
                     <div className="flex justify-end gap-3 pt-4">
                         <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancelar</Button>
                         <Button onClick={handleSave} disabled={isCreating || isUpdating} className="px-8">

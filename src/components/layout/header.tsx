@@ -6,15 +6,8 @@ import { Button } from '@/components/ui/button';
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/utils/cn';
-
-interface Notificacion {
-    id: number;
-    titulo: string;
-    descripcion: string;
-    tipo: 'warning' | 'error' | 'success';
-    leida: boolean;
-    ruta: string;
-}
+import { useNotificaciones } from '@/hooks/use-notificaciones';
+import type { Notificacion } from '@/types';
 
 interface HeaderProps {
     title: string;
@@ -29,15 +22,11 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [notifOpen, setNotifOpen] = useState(false);
-    const [notificaciones, setNotificaciones] = useState<Notificacion[]>([
-        { id: 1, titulo: 'Préstamo por vencer', descripcion: 'El préstamo #123 vence mañana', tipo: 'warning', leida: false, ruta: '/prestamos?tab=vencidos' },
-        { id: 2, titulo: 'Stock bajo', descripcion: 'Filamento PLA Blanco tiene stock bajo', tipo: 'error', leida: false, ruta: '/materiales' },
-        { id: 3, titulo: 'Préstamo devuelto', descripcion: 'El equipo MacBook Pro fue devuelto', tipo: 'success', leida: true, ruta: '/prestamos' },
-        { id: 4, titulo: 'Equipo dañado', descripcion: 'Se reportó un equipo como dañado', tipo: 'error', leida: false, ruta: '/danados' },
-        { id: 5, titulo: 'Nuevo préstamo', descripcion: 'Se registró un nuevo préstamo', tipo: 'success', leida: false, ruta: '/prestamos' },
-    ]);
+    const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const notifRef = useRef<HTMLDivElement>(null);
+
+    const { notificaciones: apiNotificaciones, markAsRead, isMarkingAsRead } = useNotificaciones();
 
     useEffect(() => {
         const handleClick = (e: MouseEvent) => {
@@ -66,23 +55,16 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
         }
     };
 
-    const notificacionesNoLeidas = notificaciones.filter(n => !n.leida).length;
+    const notificacionesNoLeidas = apiNotificaciones.filter(n => !n.leida).length;
 
-    const handleNotifClick = (id: number, ruta: string) => {
-        // Marcar como leída
-        setNotificaciones(prev => prev.map(n => 
-            n.id === id ? { ...n, leida: true } : n
-        ));
+    const handleNotifClick = async (id: number, url: string) => {
+        try {
+            await markAsRead(id);
+        } catch (err) {
+            console.error('Error marking as read:', err);
+        }
         setNotifOpen(false);
-        navigate(ruta);
-    };
-
-    const marcarTodasLeidas = () => {
-        setNotificaciones(prev => prev.map(n => ({ ...n, leida: true })));
-    };
-
-    const limpiarNotificaciones = () => {
-        setNotificaciones([]);
+        navigate(url || '/notificaciones');
     };
 
     return (
@@ -145,17 +127,17 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                                 </button>
                             </div>
                             <div className="max-h-80 overflow-y-auto">
-                                {notificaciones.length === 0 ? (
+                                {apiNotificaciones.length === 0 ? (
                                     <div className="px-4 py-8 text-center text-muted-foreground dark:text-[#dddeff]">
                                         <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
                                         <p>No tienes notificaciones</p>
                                     </div>
                                 ) : (
                                     <>
-                                        {notificaciones.map((notif) => (
+                                        {apiNotificaciones.map((notif) => (
                                             <div
                                                 key={notif.id}
-                                                onClick={() => handleNotifClick(notif.id, notif.ruta)}
+                                                onClick={() => handleNotifClick(notif.id, notif.url || '/notificaciones')}
                                                 className={cn(
                                                     "px-4 py-3 border-b hover:bg-slate-50 dark:hover:bg-[#292a69]/50 cursor-pointer transition-colors dark:border-[#292a69]",
                                                     !notif.leida && "bg-blue-50/50 dark:bg-blue-900/20"
@@ -174,7 +156,7 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <p className="text-sm font-semibold text-[#2d3335] dark:text-[#fdfdfd]">{notif.titulo}</p>
-                                                        <p className="text-xs text-muted-foreground dark:text-[#7b7b8b] truncate">{notif.descripcion}</p>
+                                                        <p className="text-xs text-muted-foreground dark:text-[#7b7b8b] truncate">{notif.mensaje}</p>
                                                     </div>
                                                     {!notif.leida && (
                                                         <div className="h-2 w-2 rounded-full bg-blue-500 shrink-0 mt-1"></div>
@@ -185,7 +167,7 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                                     </>
                                 )}
                             </div>
-                            {notificaciones.length > 0 && (
+                            {apiNotificaciones.length > 0 && (
                                 <div className="px-4 py-2 bg-slate-50 dark:bg-[#292a69]/50 flex justify-center gap-6 dark:border-t dark:border-[#292a69]">
                                     <button
                                         onClick={() => { setNotifOpen(false); navigate('/notificaciones'); }}
@@ -195,78 +177,24 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                                         <Bell className="h-4 w-4" />
                                     </button>
                                     <button
-                                        onClick={marcarTodasLeidas}
+                                        onClick={() => {}}
                                         className="text-[#4f645b] dark:text-[#5a62b8] hover:text-[#3a5046] dark:hover:text-[#7a82c8] p-1 rounded hover:bg-slate-200 dark:hover:bg-[#3b438e]"
                                         title="Marcar todas como leídas"
                                     >
                                         <Check className="h-4 w-4" />
                                     </button>
-                                    <button
-                                        onClick={limpiarNotificaciones}
-                                        className="text-red-500 hover:text-red-600 dark:hover:text-red-400 p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
-                                        title="Limpiar todo"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </button>
                                 </div>
                             )}
-                            {notificaciones.length === 0 && (
+{apiNotificaciones.length === 0 && (
                                 <div className="px-4 py-2 bg-slate-50 dark:bg-[#292a69]/50 flex justify-center dark:border-t dark:border-[#292a69]">
                                     <button
                                         onClick={() => { setNotifOpen(false); navigate('/notificaciones'); }}
-                                        className="text-[#4f645b] dark:text-[#5a62b8] hover:text-[#3a5046] dark:hover:text-[#7a82c8] p-1 rounded hover:bg-slate-200 dark:hover:bg-[#3b438e]"
-                                        title="Ver todas"
+                                        className="text-xs text-[#4f645b] dark:text-[#5a62b8] hover:text-[#3a5046] dark:hover:text-[#7a82c8] p-2"
                                     >
-                                        <Bell className="h-4 w-4" />
+                                        Ver todas las notificaciones
                                     </button>
                                 </div>
                             )}
-                        </div>
-                    )}
-                </div>
-
-                {/* Theme Toggle */}
-                <button
-                    onClick={toggleTheme}
-                    className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-[#292a69] transition-colors"
-                    title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
-                >
-                    {theme === 'dark' ? (
-                        <Sun className="h-5 w-5 text-[#dddeff]" />
-                    ) : (
-                        <Moon className="h-5 w-5 text-[#5a6062]" />
-                    )}
-                </button>
-
-                {/* User dropdown */}
-                <div className="relative" ref={dropdownRef}>
-                    <button
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
-                        className="flex items-center gap-3 text-left hover:opacity-80 transition-opacity"
-                    >
-                        <div className="hidden sm:flex flex-col items-end">
-                            <span className="font-bold text-sm text-[#1a1f1c] dark:text-[#fdfdfd] leading-tight">{user?.nombre || 'Usuario'}</span>
-                            <span className="text-[11px] text-muted-foreground dark:text-[#dddeff] capitalize font-medium">{user?.rol || 'Administrador'}</span>
-                        </div>
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1a1f1c] dark:bg-[#3b438e] text-white overflow-hidden">
-                            <UserCircle className="h-full w-full opacity-80" />
-                        </div>
-                    </button>
-
-                    {dropdownOpen && (
-                        <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl border bg-white dark:bg-[#22214d] p-2 shadow-xl animate-scale-in dark:border-[#292a69]">
-                            <div className="px-3 py-3 border-b mb-1 dark:border-[#292a69]">
-                                <p className="text-sm font-bold text-[#1a1f1c] dark:text-[#fdfdfd] truncate">{user?.nombre}</p>
-                                <p className="text-xs text-muted-foreground dark:text-[#dddeff] truncate">{user?.email}</p>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={handleLogout}
-                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-medium"
-                            >
-                                <LogOut className="h-4 w-4" />
-                                Cerrar sesión
-                            </button>
                         </div>
                     )}
                 </div>
