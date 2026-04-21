@@ -29,6 +29,9 @@ export default function MovimientosPage() {
     const { materiales } = useMateriales();
 
     const [search, setSearch] = useState('');
+    const [userFilter, setUserFilter] = useState<string>('');
+
+    const uniqueUsers = [...new Set(movimientos.map(m => m.usuario_nombre).filter(Boolean))];
 
     if (isError) {
         return (
@@ -58,9 +61,10 @@ export default function MovimientosPage() {
         const description = (m.descripcion || '').toLowerCase();
         const type = (m.tipo || '').toLowerCase();
         const query = search.toLowerCase();
+        const matchesUser = userFilter === '' || m.usuario_nombre === userFilter;
 
-        return itemName.includes(query) || description.includes(query) || type.includes(query);
-    });
+        return matchesUser && (itemName.includes(query) || description.includes(query) || type.includes(query));
+    }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
     const columns = [
         { key: 'id', header: 'ID', className: 'w-16 font-mono text-muted-foreground' },
@@ -85,7 +89,25 @@ export default function MovimientosPage() {
 
     return (
         <div className="space-y-6 animate-fade-in pb-8">
-            {/* Toolbar */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-2">
+                    <h2 className="text-4xl font-extrabold text-[#2d3335] dark:text-[#fdfdfd] tracking-tighter leading-none">Movimientos</h2>
+                    <p className="text-[#5a6062] dark:text-[#dddeff] max-w-md">Historial de entradas, salidas y ajustes del inventario.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <select
+                        value={userFilter}
+                        onChange={(e) => setUserFilter(e.target.value)}
+                        className="h-12 px-4 rounded-full bg-white dark:bg-[#292a69] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/30 border border-transparent dark:border-[#3b438e] text-sm font-medium dark:text-[#fdfdfd] focus:outline-none focus:ring-2 focus:ring-[#4f645b]/50"
+                    >
+                        <option value="">Todos los usuarios</option>
+                        {uniqueUsers.map(user => (
+                            <option key={user} value={user}>{user}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
                 <div className="relative w-full max-w-sm">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -95,15 +117,6 @@ export default function MovimientosPage() {
                         onChange={(e) => setSearch(e.target.value)}
                         className="flex h-12 w-full rounded-2xl border border-transparent bg-white dark:bg-[#292a69] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/30 pl-12 pr-4 text-sm dark:text-[#fdfdfd] placeholder:text-muted-foreground dark:placeholder:text-[#7b7b8b] transition-all hover:border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E8F3EE] dark:focus:ring-[#3b438e]/50 focus:border-[#4f645b] dark:focus:border-[#3b438e]"
                     />
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <button className="h-12 px-5 rounded-2xl bg-white dark:bg-[#292a69] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/30 text-[#1a1f1c] dark:text-[#fdfdfd] font-semibold text-sm flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-[#3b438e]/50 transition-colors">
-                        <Filter className="h-4 w-4" /> Filter
-                    </button>
-                    <button className="h-12 px-5 rounded-2xl bg-white dark:bg-[#292a69] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/30 text-[#1a1f1c] dark:text-[#fdfdfd] font-semibold text-sm flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-[#3b438e]/50 transition-colors">
-                        <Download className="h-4 w-4" /> Export CSV
-                    </button>
                 </div>
             </div>
 

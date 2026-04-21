@@ -132,7 +132,7 @@ export default function DanadosPage() {
         return items.filter(item =>
             item.nombre.toLowerCase().includes(search.toLowerCase()) ||
             (item.codigo && item.codigo.toLowerCase().includes(search.toLowerCase()))
-        );
+        ).sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
     }, [items, search]);
 
     const { paginatedItems, currentPage, setCurrentPage, totalPages, totalItems, startItem, endItem } = usePagination(filtered, 20);

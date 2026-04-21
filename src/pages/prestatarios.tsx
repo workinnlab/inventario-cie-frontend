@@ -86,7 +86,7 @@ export default function PrestatariosPage() {
     const filtered = items.filter((e) =>
         (e.nombre || '').toLowerCase().includes(search.toLowerCase()) ||
         (e.dependencia || '').toLowerCase().includes(search.toLowerCase()),
-    );
+    ).sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
 
     const columns = [
         {
@@ -123,7 +123,20 @@ export default function PrestatariosPage() {
 
     return (
         <div className="space-y-6 animate-fade-in pb-8">
-            {/* Toolbar */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-2">
+                    <h2 className="text-4xl font-extrabold text-[#2d3335] dark:text-[#fdfdfd] tracking-tighter leading-none">Prestatarios</h2>
+                    <p className="text-[#5a6062] dark:text-[#dddeff] max-w-md">Gestiona los usuarios autorizados para préstamos de equipo.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    {canEdit && (
+                        <Button onClick={openCreate} className="h-12 px-6 rounded-full gap-2 font-bold shadow-md dark:bg-[#3b438e] dark:hover:bg-[#5a62b8]">
+                            <Plus className="h-4 w-4" /> Nuevo Prestatario
+                        </Button>
+                    )}
+                </div>
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
                 <div className="relative w-full max-w-sm">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -133,20 +146,6 @@ export default function PrestatariosPage() {
                         onChange={(e) => setSearch(e.target.value)}
                         className="flex h-12 w-full rounded-2xl border border-transparent bg-white dark:bg-[#292a69] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/30 pl-12 pr-4 text-sm dark:text-[#fdfdfd] placeholder:text-muted-foreground dark:placeholder:text-[#7b7b8b] transition-all hover:border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E8F3EE] dark:focus:ring-[#3b438e]/50 focus:border-[#415A52] dark:focus:border-[#3b438e]"
                     />
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <button className="h-12 px-5 rounded-2xl bg-white dark:bg-[#292a69] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/30 text-[#1a1f1c] dark:text-[#fdfdfd] font-semibold text-sm flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-[#3b438e]/50 transition-colors">
-                        <Filter className="h-4 w-4" /> Filter
-                    </button>
-                    <button className="h-12 px-5 rounded-2xl bg-white dark:bg-[#292a69] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/30 text-[#1a1f1c] dark:text-[#fdfdfd] font-semibold text-sm flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-[#3b438e]/50 transition-colors">
-                        <Download className="h-4 w-4" /> Export
-                    </button>
-                    {canEdit && (
-                        <Button onClick={openCreate} className="h-12 px-6 rounded-2xl gap-2 font-bold shadow-md dark:bg-[#3b438e] dark:hover:bg-[#5a62b8]">
-                            <Plus className="h-4 w-4" /> Nuevo Prestatario
-                        </Button>
-                    )}
                 </div>
             </div>
 

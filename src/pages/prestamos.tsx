@@ -116,6 +116,10 @@ export default function PrestamosPage() {
             const matchesSearch = prestatario.includes(search.toLowerCase()) ||
                 (p.observaciones || '').toLowerCase().includes(search.toLowerCase());
             return matchesEstado && matchesSearch;
+        }).sort((a, b) => {
+            const nombreA = prestatarios.find(pr => pr.id === a.prestatario_id)?.nombre || '';
+            const nombreB = prestatarios.find(pr => pr.id === b.prestatario_id)?.nombre || '';
+            return nombreA.localeCompare(nombreB);
         });
     }, [prestamos, prestatarios, activeTab, search]);
 
@@ -198,9 +202,6 @@ export default function PrestamosPage() {
                     <p className="text-[#5a6062] dark:text-[#dddeff] max-w-md">Gestiona los préstamos de equipos y materiales del inventario.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="h-12 px-5 rounded-full gap-2 font-semibold dark:bg-[#292a69] dark:text-[#fdfdfd] dark:hover:bg-[#3b438e]/50">
-                        <Filter className="h-4 w-4" /> Filtros
-                    </Button>
                     <Button variant="outline" className="h-12 px-5 rounded-full gap-2 font-semibold dark:bg-[#292a69] dark:text-[#fdfdfd] dark:hover:bg-[#3b438e]/50">
                         <Download className="h-4 w-4" /> Exportar
                     </Button>

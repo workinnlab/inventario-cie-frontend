@@ -120,7 +120,7 @@ export default function MaterialesPage() {
                 (m.cantidad || '').toLowerCase().includes(search.toLowerCase());
             const matchesTab = activeTab === 'Todos' || m.categoria === activeTab;
             return matchesSearch && matchesTab;
-        });
+        }).sort((a, b) => (a.color || '').localeCompare(b.color || ''));
     }, [materiales, search, activeTab]);
 
     const { paginatedItems, currentPage, setCurrentPage, totalPages, totalItems, startItem, endItem } = usePagination(filtered, 20);
@@ -150,6 +150,7 @@ export default function MaterialesPage() {
         { key: 'categoria', header: 'Categoría', render: (m: Material) => <span className="font-medium dark:text-[#dddeff]">{m.categoria}</span> },
         { key: 'en_stock', header: 'Stock', render: (m: Material) => <span className="font-bold text-green-600 dark:text-green-400">{m.en_stock}</span> },
         { key: 'en_uso', header: 'En Uso', render: (m: Material) => <span className="font-medium text-[#486277] dark:text-[#dddeff]">{m.en_uso}</span> },
+        { key: 'usado', header: 'Usado', render: (m: Material) => <span className="font-medium text-[#486277] dark:text-[#dddeff]">{m.usado}</span> },
         { key: 'total', header: 'Total', render: (m: Material) => <span className="font-bold dark:text-[#fdfdfd]">{m.total}</span> },
         { key: 'estado', header: 'Estado', render: (m: Material) => getStockBadge(m.en_stock) },
         ...(canEdit || canDelete ? [{
@@ -189,9 +190,6 @@ export default function MaterialesPage() {
                     <p className="text-[#5a6062] dark:text-[#dddeff] max-w-md">Gestiona los materiales del inventario (filamentos, resinas, etc.).</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="h-12 px-5 rounded-full gap-2 font-semibold dark:bg-[#292a69] dark:text-[#fdfdfd] dark:hover:bg-[#3b438e]/50">
-                        <Filter className="h-4 w-4" /> Filtros
-                    </Button>
                     {canEdit && (
                         <Button onClick={openCreate} className="h-12 px-6 rounded-full gap-2 font-bold shadow-md dark:bg-[#3b438e] dark:hover:bg-[#5a62b8]">
                             <Plus className="h-4 w-4" /> Nuevo Material

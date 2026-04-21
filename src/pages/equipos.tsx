@@ -162,7 +162,7 @@ export default function EquiposPage() {
 
             const matchesTab = activeTab === 'Todos' || e.estado === tabEstadoMap[activeTab];
             return matchesSearch && matchesTab;
-        });
+        }).sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
     }, [equipos, search, activeTab]);
 
     const { paginatedItems, totalPages, totalItems, startItem, endItem } = usePagination(filtered, 20);
@@ -250,9 +250,6 @@ export default function EquiposPage() {
                     <p className="text-[#5a6062] dark:text-[#dddeff] max-w-md">Gestiona y monitorea el estado actual de todos los activos tecnológicos de la organización.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="h-12 px-5 rounded-full gap-2 font-semibold dark:bg-[#292a69] dark:text-[#fdfdfd] dark:hover:bg-[#3b438e]/50">
-                        <Filter className="h-4 w-4" /> Filtros Avanzados
-                    </Button>
                     {canEdit && (
                         <Button onClick={openCreate} className="h-12 px-6 rounded-full gap-2 font-bold shadow-md dark:bg-[#3b438e] dark:hover:bg-[#5a62b8]">
                             <Plus className="h-4 w-4" /> Nuevo Equipo
