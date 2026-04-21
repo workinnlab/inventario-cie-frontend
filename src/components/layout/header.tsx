@@ -198,6 +198,48 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                         </div>
                     )}
                 </div>
+
+                {/* Theme Toggle */}
+                <button
+                    onClick={toggleTheme}
+                    className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-[#292a69] transition-colors"
+                    title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+                >
+                    {theme === 'dark' ? (
+                        <Sun className="h-5 w-5 text-[#5a6062] dark:text-[#dddeff]" />
+                    ) : (
+                        <Moon className="h-5 w-5 text-[#5a6062] dark:text-[#dddeff]" />
+                    )}
+                </button>
+
+                {/* User Profile Dropdown */}
+                <div className="relative" ref={dropdownRef}>
+                    <button
+                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        className="flex items-center gap-2 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-[#292a69] transition-colors"
+                    >
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1a1f1c] dark:bg-[#3b438e] text-white overflow-hidden">
+                            <UserCircle className="h-full w-full opacity-80" />
+                        </div>
+                    </button>
+
+                    {dropdownOpen && (
+                        <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl border bg-white dark:bg-[#22214d] p-2 shadow-xl animate-scale-in dark:border-[#292a69]">
+                            <div className="px-3 py-3 border-b mb-1 dark:border-[#292a69]">
+                                <p className="text-sm font-bold text-[#1a1f1c] dark:text-[#fdfdfd] truncate">{user?.nombre}</p>
+                                <p className="text-xs text-muted-foreground dark:text-[#dddeff] truncate">{user?.email}</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleLogout}
+                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-medium"
+                            >
+                                <LogOut className="h-4 w-4" />
+                                Cerrar sesión
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
         </header>
     );
