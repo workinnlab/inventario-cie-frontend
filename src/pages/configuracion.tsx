@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Save, AlertTriangle, Package, ClipboardList, Monitor, Cpu, Bot, Settings, X } from 'lucide-react';
+import { Save, AlertTriangle, Package, ClipboardList, Monitor, Cpu, Bot, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Modal } from '@/components/ui/modal';
 import { useToast } from '@/components/ui/toast';
 import { useAuth } from '@/contexts/auth-context';
 import { configuracionService, ConfiguracionAlerta } from '@/services/configuracion';
@@ -14,7 +13,6 @@ export default function ConfiguracionPage() {
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const { hasRole } = useAuth();
-    const [modalOpen, setModalOpen] = useState(true);
 
     const { data: configuraciones = [], isLoading, isError, error } = useQuery({
         queryKey: ['configuracion-alertas'],
@@ -94,14 +92,18 @@ export default function ConfiguracionPage() {
     }
 
     return (
-        <div className="animate-fade-in">
-            <Modal
-                open={modalOpen}
-                onClose={() => setModalOpen(false)}
-                title="Configuración del Sistema"
-                className="max-w-3xl"
-            >
-                <div className="pt-2 pb-4">
+        <div className="space-y-8 animate-fade-in pb-8">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-2">
+                    <h2 className="text-4xl font-extrabold text-[#2d3335] dark:text-[#fdfdfd] tracking-tighter leading-none">Configuración</h2>
+                    <p className="text-[#5a6062] dark:text-[#dddeff] max-w-md">Administra los umbrales y límites del sistema.</p>
+                </div>
+            </div>
+
+            {/* Config Cards */}
+            <div className="bg-white dark:bg-[#22214d] rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/40 border border-gray-100/50 dark:border-[#292a69]/50 overflow-hidden">
+                <div className="p-8">
                     <p className="text-sm text-muted-foreground dark:text-[#7b7b8b] mb-6">
                         Configura los umbrales y límites del sistema. Los cambios se guardan automáticamente al hacer clic en Guardar.
                     </p>
@@ -137,18 +139,8 @@ export default function ConfiguracionPage() {
                             ))}
                         </div>
                     )}
-
-                    <div className="flex justify-end gap-3 mt-6 pt-4 border-t dark:border-[#292a69]">
-                        <Button
-                            variant="outline"
-                            onClick={() => setModalOpen(false)}
-                            className="dark:border-[#292a69] dark:text-[#dddeff] dark:hover:bg-[#292a69]"
-                        >
-                            Cerrar
-                        </Button>
-                    </div>
                 </div>
-            </Modal>
+            </div>
         </div>
     );
 }

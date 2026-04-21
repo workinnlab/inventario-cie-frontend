@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, FileJson, FileSpreadsheet, Printer, Calendar, ArrowRight, CheckCircle } from 'lucide-react';
+import { Download, FileJson, FileSpreadsheet, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/toast';
 import * as exportService from '@/services/export';
@@ -134,37 +134,6 @@ export default function ReportesPage() {
                         <Printer className="h-4 w-4" />
                         Imprimir
                     </Button>
-                </div>
-            </div>
-
-            {/* Recent Exports */}
-            <div className="bg-white dark:bg-[#22214d] p-8 rounded-2xl shadow-sm dark:shadow-black/30 border border-gray-100/50 dark:border-[#292a69]/50">
-                <h3 className="text-xl font-bold text-[#2d3335] dark:text-[#fdfdfd] mb-6">Últimas Exportaciones</h3>
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-[#f1f4f5] dark:bg-[#292a69]">
-                        <div className="flex items-center gap-4">
-                            <div className="h-10 w-10 rounded-lg bg-[#4f645b]/10 dark:bg-[#3b438e]/30 flex items-center justify-center">
-                                <FileJson className="h-5 w-5 text-[#4f645b] dark:text-[#9fb3ff]" />
-                            </div>
-                            <div>
-                                <p className="font-semibold text-[#2d3335] dark:text-[#fdfdfd]">backup_inventario_2026-03-24.json</p>
-                                <p className="text-xs text-[#5a6062] dark:text-[#dddeff]">Hace 2 horas</p>
-                            </div>
-                        </div>
-                        <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
-                    </div>
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-[#f1f4f5] dark:bg-[#292a69]">
-                        <div className="flex items-center gap-4">
-                            <div className="h-10 w-10 rounded-lg bg-[#486277]/10 dark:bg-[#3b438e]/30 flex items-center justify-center">
-                                <FileSpreadsheet className="h-5 w-5 text-[#486277] dark:text-[#9fb3ff]" />
-                            </div>
-                            <div>
-                                <p className="font-semibold text-[#2d3335] dark:text-[#fdfdfd]">resumen_inventario_2026-03-23.json</p>
-                                <p className="text-xs text-[#5a6062] dark:text-[#dddeff]">Ayer</p>
-                            </div>
-                        </div>
-                        <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
-                    </div>
                 </div>
             </div>
         </div>

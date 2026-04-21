@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-    LayoutDashboard, Archive, Cpu, Bot, Package, Layers, AlertTriangle, BarChart3, Settings, HelpCircle, LogOut, Plus, ChevronDown, Users, PanelLeftClose, PanelLeft, History
+    LayoutDashboard, Archive, Cpu, Bot, Package, Layers, AlertTriangle, BarChart3, Settings, LogOut, Plus, ChevronDown, Users, PanelLeftClose, PanelLeft, History
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useAuth } from '@/contexts/auth-context';
@@ -19,12 +19,12 @@ const inventarioItems = [
 ];
 
 const otherItems = [
-    { to: '/prestamos', icon: Layers, label: 'Préstamos' },
-    { to: '/prestatarios', icon: Users, label: 'Prestatarios' },
-    { to: '/movimientos', icon: History, label: 'Movimientos' },
+    { to: '/prestamos', icon: Layers, label: 'Préstamos', roles: ['admin', 'inventory'] },
+    { to: '/prestatarios', icon: Users, label: 'Prestatarios', roles: ['admin', 'inventory'] },
+    { to: '/movimientos', icon: History, label: 'Movimientos', roles: ['admin', 'inventory'] },
     { to: '/danados', icon: AlertTriangle, label: 'Dañados' },
-    { to: '/reportes', icon: BarChart3, label: 'Reportes' },
-    { to: '/configuracion', icon: Settings, label: 'Configuración' },
+    { to: '/reportes', icon: BarChart3, label: 'Reportes', roles: ['admin', 'inventory'] },
+    { to: '/configuracion', icon: Settings, label: 'Configuración', roles: ['admin'] },
 ];
 
 interface SidebarProps {
@@ -149,7 +149,9 @@ export function Sidebar({ collapsed, onToggle, onAddNew }: SidebarProps) {
                 )}
 
                 {/* Other Items */}
-                {otherItems.map(({ to, icon: Icon, label }) => (
+                {otherItems
+                    .filter(item => !item.roles || hasRole(item.roles))
+                    .map(({ to, icon: Icon, label }) => (
                     <NavLink
                         key={to}
                         to={to}
@@ -176,28 +178,20 @@ export function Sidebar({ collapsed, onToggle, onAddNew }: SidebarProps) {
 
             {/* Bottom Actions */}
             <div className="p-4 flex flex-col gap-2 shrink-0">
-                <Button
-                    onClick={onAddNew}
-                    className={cn(
-                        "w-full bg-gradient-to-br from-[#4f645b] to-[#43574f] dark:from-[#3b438e] dark:to-[#292a69] hover:brightness-110 text-white dark:text-[#fdfdfd] rounded-xl h-12 shadow-md gap-2 font-semibold justify-center",
-                        collapsed ? "px-0" : "px-4"
-                    )}
-                >
-                    <Plus className="h-5 w-5" />
-                    {!collapsed && <span>Agregar Nuevo</span>}
-                </Button>
-
-                <div className="flex flex-col gap-1 mt-2 pt-4 border-t border-slate-200 dark:border-[#292a69]">
-                    <button
-                        onClick={() => window.open('/docs/MANUAL_USUARIO.md', '_blank')}
+                {hasRole(['admin', 'inventory']) && (
+                    <Button
+                        onClick={onAddNew}
                         className={cn(
-                            "flex items-center gap-3 py-2.5 rounded-xl text-[#5a6062] dark:text-[#dddeff] hover:text-[#4f645b] dark:hover:text-[#5a62b8] hover:bg-emerald-50/50 dark:hover:bg-[#292a69]/50 transition-colors",
-                            collapsed ? "justify-center" : "px-4"
+                            "w-full bg-gradient-to-br from-[#4f645b] to-[#43574f] dark:from-[#3b438e] dark:to-[#292a69] hover:brightness-110 text-white dark:text-[#fdfdfd] rounded-xl h-12 shadow-md gap-2 font-semibold justify-center",
+                            collapsed ? "px-0" : "px-4"
                         )}
                     >
-                        <HelpCircle className="h-5 w-5 shrink-0" />
-                        {!collapsed && <span className="text-sm font-medium">Ayuda</span>}
-                    </button>
+                        <Plus className="h-5 w-5" />
+                        {!collapsed && <span>Agregar Nuevo</span>}
+                    </Button>
+                )}
+
+                <div className="flex flex-col gap-1 mt-2 pt-4 border-t border-slate-200 dark:border-[#292a69]">
                     <button
                         onClick={() => logout()}
                         className={cn(

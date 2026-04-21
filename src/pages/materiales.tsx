@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Plus, Pencil, Trash2, Search, AlertTriangle, Download, Filter, ArrowLeft, Package, Droplet, Box } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, AlertTriangle, Download, Filter, Package, Droplet, Box } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table } from '@/components/ui/table';
@@ -14,6 +14,7 @@ import { Spinner } from '@/components/ui/spinner';
 import type { Material, MaterialCreate, Column } from '@/types';
 import { getErrorMessage } from '@/utils/error-handler';
 import { usePagination } from '@/hooks/use-pagination';
+import { Pagination } from '@/components/ui/pagination';
 
 const tabs = ['Todos', 'Filamento', 'Resina', 'Otros'];
 
@@ -230,22 +231,15 @@ export default function MaterialesPage() {
                 <Table columns={columns} data={paginatedItems} loading={isLoading} emptyMessage="No se encontraron materiales" />
 
                 {!isLoading && filtered.length > 0 && (
-                    <div className="px-8 py-5 border-t border-gray-50 dark:border-[#292a69] flex items-center justify-between text-sm text-muted-foreground dark:text-[#dddeff] font-medium">
-                        <span>Mostrando {startItem} a {endItem} de {totalItems} registros</span>
-                        <div className="flex items-center gap-2">
-                            <button onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} disabled={currentPage === 1} className="px-4 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-[#292a69] disabled:opacity-30">
-                                <ArrowLeft className="h-4 w-4" />
-                            </button>
-                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => (
-                                <button key={i} onClick={() => setCurrentPage(i + 1)} className={`px-4 py-2 rounded-xl font-bold ${currentPage === i + 1 ? 'bg-[#d1e8dd] dark:bg-[#3b438e] text-[#4f645b] dark:text-[#fdfdfd]' : 'hover:bg-gray-50 dark:hover:bg-[#292a69]'}`}>
-                                    {i + 1}
-                                </button>
-                            ))}
-                            <button onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} className="px-4 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-[#292a69] disabled:opacity-30">
-                                <ArrowLeft className="h-4 w-4 rotate-180" />
-                            </button>
-                        </div>
-                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        totalItems={totalItems}
+                        startItem={startItem}
+                        endItem={endItem}
+                        onPageChange={setCurrentPage}
+                        label="materiales"
+                    />
                 )}
             </div>
 

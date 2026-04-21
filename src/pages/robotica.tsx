@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Plus, Pencil, Trash2, Search, AlertTriangle, Download, Filter, ArrowLeft } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, AlertTriangle, Download, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table } from '@/components/ui/table';
@@ -14,6 +14,7 @@ import { Spinner } from '@/components/ui/spinner';
 import type { Robot, RobotCreate, Column } from '@/types';
 import { getErrorMessage } from '@/utils/error-handler';
 import { usePagination } from '@/hooks/use-pagination';
+import { Pagination } from '@/components/ui/pagination';
 
 const estadoOptions = [
     { value: 'disponible', label: 'Disponible' },
@@ -273,40 +274,15 @@ export default function RoboticaPage() {
 
                 {/* Pagination */}
                 {!isLoading && filtered.length > 0 && (
-                    <div className="px-8 py-5 border-t border-gray-50 dark:border-[#292a69] flex items-center justify-between text-sm text-muted-foreground dark:text-[#dddeff] font-medium">
-                        <span>Mostrando {startItem} a {endItem} de {totalItems} registros</span>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                                disabled={currentPage === 1}
-                                className="px-4 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-[#292a69] transition-colors disabled:opacity-30"
-                            >
-                                <ArrowLeft className="h-4 w-4" />
-                            </button>
-                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                const page = i + 1;
-                                return (
-                                    <button
-                                        key={page}
-                                        onClick={() => setCurrentPage(page)}
-                                        className={`px-4 py-2 rounded-xl font-bold transition-colors ${currentPage === page
-                                            ? 'bg-[#E8F3EE] dark:bg-[#3b438e] text-[#4f645b] dark:text-[#fdfdfd]'
-                                            : 'hover:bg-gray-50 dark:hover:bg-[#292a69]'
-                                        }`}
-                                    >
-                                        {page}
-                                    </button>
-                                );
-                            })}
-                            <button
-                                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                                disabled={currentPage === totalPages}
-                                className="px-4 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-[#292a69] transition-colors disabled:opacity-30"
-                            >
-                                <ArrowLeft className="h-4 w-4 rotate-180" />
-                            </button>
-                        </div>
-                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        totalItems={totalItems}
+                        startItem={startItem}
+                        endItem={endItem}
+                        onPageChange={setCurrentPage}
+                        label="robots"
+                    />
                 )}
             </div>
 
