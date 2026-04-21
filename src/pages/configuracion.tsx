@@ -92,8 +92,7 @@ export default function ConfiguracionPage() {
     }
 
     return (
-        <div className="space-y-8 animate-fade-in pb-8">
-            {/* Page Header */}
+        <div className="space-y-6 animate-fade-in pb-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-2">
                     <h2 className="text-4xl font-extrabold text-[#2d3335] dark:text-[#fdfdfd] tracking-tighter leading-none">Configuración</h2>
@@ -101,7 +100,6 @@ export default function ConfiguracionPage() {
                 </div>
             </div>
 
-            {/* Config Cards */}
             <div className="bg-white dark:bg-[#22214d] rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/40 border border-gray-100/50 dark:border-[#292a69]/50 overflow-hidden">
                 <div className="p-8">
                     <p className="text-sm text-muted-foreground dark:text-[#7b7b8b] mb-6">

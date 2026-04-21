@@ -98,11 +98,11 @@ export default function MovimientosPage() {
                     <select
                         value={userFilter}
                         onChange={(e) => setUserFilter(e.target.value)}
-                        className="h-12 px-4 rounded-full bg-white dark:bg-[#292a69] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/30 border border-transparent dark:border-[#3b438e] text-sm font-medium dark:text-[#fdfdfd] focus:outline-none focus:ring-2 focus:ring-[#4f645b]/50"
+                        className="h-12 px-4 rounded-full bg-white dark:bg-[#292a69] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-black/30 border border-transparent dark:border-[#3b438e] text-sm font-medium dark:text-[#fdfdfd] focus:outline-none focus:ring-2 focus:ring-[#4f645b]/50 cursor-pointer"
                     >
-                        <option value="">Todos los usuarios</option>
+                        <option value="" className="dark:bg-[#22214d]">Todos los usuarios</option>
                         {uniqueUsers.map(user => (
-                            <option key={user} value={user}>{user}</option>
+                            <option key={user} value={user} className="dark:bg-[#22214d]">{user}</option>
                         ))}
                     </select>
                 </div>

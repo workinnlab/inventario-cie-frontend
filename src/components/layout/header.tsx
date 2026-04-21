@@ -256,8 +256,8 @@ export function Header({ title, subtitle, onMenuClick }: HeaderProps) {
                     {dropdownOpen && (
                         <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl border bg-white dark:bg-[#22214d] p-2 shadow-xl animate-scale-in dark:border-[#292a69]">
                             <div className="px-3 py-3 border-b mb-1 dark:border-[#292a69]">
-                                <p className="text-sm font-bold text-[#1a1f1c] dark:text-[#fdfdfd]">{user?.nombre}</p>
-                                <p className="text-xs text-muted-foreground dark:text-[#dddeff]">{user?.email}</p>
+                                <p className="text-sm font-bold text-[#1a1f1c] dark:text-[#fdfdfd] truncate">{user?.nombre}</p>
+                                <p className="text-xs text-muted-foreground dark:text-[#dddeff] truncate">{user?.email}</p>
                             </div>
                             <button
                                 type="button"

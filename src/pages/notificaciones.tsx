@@ -5,61 +5,57 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-
-interface Notificacion {
-    id: number;
-    titulo: string;
-    descripcion: string;
-    tipo: 'warning' | 'error' | 'success';
-    leida: boolean;
-    ruta: string;
-    fecha: string;
-}
-
-const notificacionesInitial: Notificacion[] = [
-    { id: 1, titulo: 'Préstamo por vencer', descripcion: 'El préstamo #123 vence mañana', tipo: 'warning', leida: false, ruta: '/prestamos?tab=vencidos', fecha: '2026-03-27T10:00:00Z' },
-    { id: 2, titulo: 'Stock bajo', descripcion: 'Filamento PLA Blanco tiene stock bajo', tipo: 'error', leida: false, ruta: '/materiales', fecha: '2026-03-27T09:30:00Z' },
-    { id: 3, titulo: 'Préstamo devuelto', descripcion: 'El equipo MacBook Pro fue devuelto', tipo: 'success', leida: true, ruta: '/prestamos', fecha: '2026-03-26T15:00:00Z' },
-    { id: 4, titulo: 'Equipo dañado', descripcion: 'Se reportó un equipo como dañado', tipo: 'error', leida: false, ruta: '/danados', fecha: '2026-03-26T14:00:00Z' },
-    { id: 5, titulo: 'Nuevo préstamo', descripcion: 'Se registró un nuevo préstamo', tipo: 'success', leida: false, ruta: '/prestamos', fecha: '2026-03-26T10:00:00Z' },
-    { id: 6, titulo: 'Mantenimiento programado', descripcion: 'El equipo #45 requiere mantenimiento', tipo: 'warning', leida: true, ruta: '/equipos', fecha: '2026-03-25T11:00:00Z' },
-    { id: 7, titulo: 'Stock agotado', descripcion: 'Filamento PLA Negro se agotó', tipo: 'error', leida: true, ruta: '/materiales', fecha: '2026-03-25T09:00:00Z' },
-];
+import { useToast } from '@/components/ui/toast';
+import { useNotificaciones } from '@/hooks/use-notificaciones';
+import { Spinner } from '@/components/ui/spinner';
+import { getErrorMessage } from '@/utils/error-handler';
 
 type FiltroNotificaciones = 'todas' | 'no_leidas' | 'leidas';
 
 export default function NotificacionesPage() {
     const [searchParams] = useSearchParams();
-    const [notificaciones, setNotificaciones] = useState<Notificacion[]>(notificacionesInitial);
+    const { toast } = useToast();
     const [search, setSearch] = useState('');
     const [filtro, setFiltro] = useState<FiltroNotificaciones>('todas');
 
-    const filtered = notificaciones.filter(n => {
-        const matchesSearch = n.titulo.toLowerCase().includes(search.toLowerCase()) ||
-            n.descripcion.toLowerCase().includes(search.toLowerCase());
-        
-        if (!matchesSearch) return false;
-        
-        if (filtro === 'no_leidas') return !n.leida;
-        if (filtro === 'leidas') return n.leida;
-        return true;
-    });
+    const {
+        notificaciones,
+        isLoading,
+        isError,
+        error,
+        markAsRead,
+        markAllAsRead,
+        deleteNotificacion,
+        isMarkingAsRead,
+        isMarkingAllAsRead,
+        isDeleting,
+    } = useNotificaciones();
 
-    const noLeidas = notificaciones.filter(n => !n.leida).length;
-    const leidas = notificaciones.filter(n => n.leida).length;
-
-    const toggleLeida = (id: number) => {
-        setNotificaciones(prev => prev.map(n =>
-            n.id === id ? { ...n, leida: !n.leida } : n
-        ));
+    const handleToggleLeida = async (id: number) => {
+        try {
+            await markAsRead(id);
+            toast('Notificación marcada como leída', 'success');
+        } catch (err: any) {
+            toast(getErrorMessage(err), 'error');
+        }
     };
 
-    const eliminarNotificacion = (id: number) => {
-        setNotificaciones(prev => prev.filter(n => n.id !== id));
+    const handleEliminar = async (id: number) => {
+        try {
+            await deleteNotificacion(id);
+            toast('Notificación eliminada', 'success');
+        } catch (err: any) {
+            toast(getErrorMessage(err), 'error');
+        }
     };
 
-    const marcarTodasLeidas = () => {
-        setNotificaciones(prev => prev.map(n => ({ ...n, leida: true })));
+    const handleMarcarTodas = async () => {
+        try {
+            await markAllAsRead();
+            toast('Todas las notificaciones marcadas como leídas', 'success');
+        } catch (err: any) {
+            toast(getErrorMessage(err), 'error');
+        }
     };
 
     const getTipoIcon = (tipo: string) => {
@@ -94,6 +90,43 @@ export default function NotificacionesPage() {
         return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
     };
 
+    const filtered = notificaciones.filter(n => {
+        const matchesSearch = n.titulo.toLowerCase().includes(search.toLowerCase()) ||
+            (n.mensaje || '').toLowerCase().includes(search.toLowerCase());
+
+        if (!matchesSearch) return false;
+
+        if (filtro === 'no_leidas') return !n.leida;
+        if (filtro === 'leidas') return n.leida;
+        return true;
+    });
+
+    const noLeidas = notificaciones.filter(n => !n.leida).length;
+    const leidas = notificaciones.filter(n => n.leida).length;
+
+    if (isError) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+                <AlertTriangle className="h-12 w-12 text-destructive" />
+                <div className="text-center space-y-2">
+                    <h3 className="font-semibold">Error al cargar notificaciones</h3>
+                    <p className="text-sm text-muted-foreground">{error?.message || 'No se pudo conectar con el servidor'}</p>
+                </div>
+                <Button variant="outline" onClick={() => window.location.reload()} className="rounded-full">
+                    Intentar de nuevo
+                </Button>
+            </div>
+        );
+    }
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <Spinner size="lg" />
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6 animate-fade-in pb-8">
             {/* Header */}
@@ -106,9 +139,9 @@ export default function NotificacionesPage() {
                 </div>
                 <div className="flex gap-2">
                     {noLeidas > 0 && (
-                        <Button variant="outline" onClick={marcarTodasLeidas}>
+                        <Button variant="outline" onClick={handleMarcarTodas} disabled={isMarkingAllAsRead}>
                             <Check className="h-4 w-4 mr-2" />
-                            Marcar todo como leído
+                            {isMarkingAllAsRead ? 'Marcando...' : 'Marcar todo como leído'}
                         </Button>
                     )}
                 </div>
@@ -186,17 +219,18 @@ export default function NotificacionesPage() {
                                                 )}
                                             </div>
                                             <p className="text-sm text-muted-foreground dark:text-slate-400 mt-1">
-                                                {notif.descripcion}
+                                                {notif.mensaje}
                                             </p>
                                             <p className="text-xs text-muted-foreground/70 mt-2">
-                                                {formatFecha(notif.fecha)}
+                                                {formatFecha(notif.created_at)}
                                             </p>
                                         </div>
                                         <div className="flex items-center gap-1 shrink-0">
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                onClick={() => toggleLeida(notif.id)}
+                                                onClick={() => handleToggleLeida(notif.id)}
+                                                disabled={isMarkingAsRead}
                                                 title={notif.leida ? 'Marcar como no leída' : 'Marcar como leída'}
                                             >
                                                 {notif.leida ? (
@@ -208,12 +242,13 @@ export default function NotificacionesPage() {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                onClick={() => eliminarNotificacion(notif.id)}
+                                                onClick={() => handleEliminar(notif.id)}
+                                                disabled={isDeleting}
                                                 title="Eliminar"
                                             >
                                                 <Trash2 className="h-4 w-4 text-red-500" />
                                             </Button>
-                                            <Link to={notif.ruta}>
+                                            <Link to={notif.url || '#'}>
                                                 <Button variant="ghost" size="icon">
                                                     <ChevronRight className="h-4 w-4" />
                                                 </Button>

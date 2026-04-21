@@ -215,6 +215,18 @@ export interface PrestatarioForm {
     email: string;
 }
 
+// ── Notificaciones ──
+export interface Notificacion {
+    id: number;
+    titulo: string;
+    mensaje: string;
+    tipo: 'warning' | 'error' | 'success';
+    leida: boolean;
+    url?: string;
+    data?: Record<string, any>;
+    created_at: string;
+}
+
 // ── Table Column Type ──
 export interface Column<T> {
     key: string;
