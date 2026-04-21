@@ -79,6 +79,7 @@ export default function MovimientosPage() {
         { key: 'item', header: 'Ítem Afectado', render: (m: Movimiento) => <span className="font-medium dark:text-[#dddeff]">{getItemName(m)}</span> },
         { key: 'descripcion', header: 'Descripción', className: 'max-w-xs truncate text-muted-foreground dark:text-[#7b7b8b]' },
         { key: 'cantidad', header: 'Cantidad', className: 'text-center', render: (m: Movimiento) => <Badge variant={m.cantidad > 0 ? 'success' : 'secondary'}>{m.cantidad > 0 ? `+${m.cantidad}` : m.cantidad}</Badge> },
+        { key: 'usuario', header: 'Usuario', className: 'text-muted-foreground dark:text-[#7b7b8b]', render: (m: Movimiento) => <span className="font-medium">{m.usuario_nombre || '-'}</span> },
         { key: 'fecha', header: 'Fecha', className: 'text-muted-foreground dark:text-[#7b7b8b]', render: (m: Movimiento) => formatDate(m.created_at) },
     ];
 

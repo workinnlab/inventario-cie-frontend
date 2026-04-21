@@ -154,8 +154,9 @@ export interface Movimiento {
     robot_id?: number;
     material_id?: number;
     cantidad: number;
-    prestamo_id?: number;
+    prestamo_id?: string;
     usuario_id?: string;
+    usuario_nombre?: string;
     descripcion?: string;
     ubicacion_anterior?: string;
     ubicacion_nueva?: string;
